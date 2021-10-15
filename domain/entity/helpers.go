@@ -10,7 +10,7 @@ import (
 	"go-gin-ddd/config"
 )
 
-func emptyPointer() *string {
+func emptyString() *string {
 	v := ""
 	return &v
 }

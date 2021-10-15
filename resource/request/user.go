@@ -21,3 +21,7 @@ type UserResetPassword struct {
 	Password        string `json:"password"`
 	PasswordConfirm string `json:"password_confirm"`
 }
+
+// profile
+
+type UserSetCoverImage string

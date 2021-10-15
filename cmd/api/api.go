@@ -74,12 +74,24 @@ func Execute() {
 
 	// routes
 	{
-		user := engine.Group("user")
-		post(user, "", userHandler.Create)
-		post(user, "login", userHandler.Login)
-		get(user, "refresh-token", userHandler.RefreshToken)
-		patch(user, "reset-password-request", userHandler.ResetPasswordRequest)
-		patch(user, "reset-password", userHandler.ResetPassword)
+		{
+			user := engine.Group("user")
+			post(user, "", userHandler.Create)
+			post(user, "login", userHandler.Login)
+			get(user, "refresh-token", userHandler.RefreshToken)
+			patch(user, "reset-password-request", userHandler.ResetPasswordRequest)
+			patch(user, "reset-password", userHandler.ResetPassword)
+		}
+		{
+			auth := engine.Group("", jwt.Verify(config.DefaultRealm))
+			{
+				user := auth.Group("user")
+				{
+					profile := user.Group("profile")
+					patch(profile, "cover-image", userHandler.SetCoverImage)
+				}
+			}
+		}
 	}
 
 	logger.Info("Succeeded in setting up routes.")

@@ -11,10 +11,12 @@ import (
 type User struct {
 	domain.SoftDeleteModel
 	Email    string `json:"email"`
-	Password string `json:"password"`
+	Password string `json:"-"`
 	UserName string `json:"user_name" gorm:"unique;index"`
 
 	RecoveryToken *string `json:"-" gorm:"index"`
+
+	CoverImage *string `json:"cover_image"`
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
@@ -69,6 +71,10 @@ func (u *User) ResetPassword(ctx context.Context, dto *request.UserResetPassword
 	if err != nil || !ok {
 		return err
 	}
-	u.RecoveryToken = emptyPointer()
+	u.RecoveryToken = emptyString()
 	return nil
+}
+
+func (u *User) SetCoverImage(coverImage string) {
+	u.CoverImage = &coverImage
 }

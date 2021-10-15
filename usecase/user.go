@@ -26,6 +26,8 @@ type IUser interface {
 	ResetPassword(ctx context.Context, req *request.UserResetPassword) error
 	Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error)
 	RefreshToken(refreshToken string) (*response.UserLogin, error)
+
+	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
 }
 
 type user struct {
@@ -141,7 +143,9 @@ func (u user) Login(ctx context.Context, req *request.UserLogin) (*response.User
 	if user.PasswordIsValid(req.Password) {
 		var res response.UserLogin
 
-		res.Token, res.RefreshToken, err = jwt.IssueToken(config.DefaultRealm, jwt.Claims{})
+		res.Token, res.RefreshToken, err = jwt.IssueToken(config.DefaultRealm, jwt.Claims{
+			"user_id": user.ID,
+		})
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
@@ -166,4 +170,15 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 		return nil, nil
 	}
 	return &res, nil
+}
+
+func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {
+	user, err := u.userRepo.GetById(ctx, ctx.UserId())
+	if err != nil {
+		return err
+	}
+
+	user.SetCoverImage(string(*req))
+
+	return u.userRepo.Update(ctx, user)
 }

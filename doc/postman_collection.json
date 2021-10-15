@@ -9,6 +9,44 @@
 			"name": "User",
 			"item": [
 				{
+					"name": "Profile",
+					"item": [
+						{
+							"name": "CoverImage",
+							"item": [
+								{
+									"name": "Set",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "\"b1d84ce9-97be-4028-9d21-946b711e730b\"",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base}}/user/profile/cover-image",
+											"host": [
+												"{{base}}"
+											],
+											"path": [
+												"user",
+												"profile",
+												"cover-image"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
 					"name": "Create",
 					"request": {
 						"method": "POST",

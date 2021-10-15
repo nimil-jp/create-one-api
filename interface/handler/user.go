@@ -103,3 +103,19 @@ func (u User) RefreshToken(_ context.Context, c *gin.Context) error {
 	c.JSON(http.StatusOK, res)
 	return nil
 }
+
+func (u User) SetCoverImage(ctx context.Context, c *gin.Context) error {
+	var req request.UserSetCoverImage
+
+	if !bind(c, &req) {
+		return nil
+	}
+
+	err := u.userUseCase.SetCoverImage(ctx, &req)
+	if err != nil {
+		return err
+	}
+
+	c.Status(http.StatusOK)
+	return nil
+}

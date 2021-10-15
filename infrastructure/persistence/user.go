@@ -23,6 +23,17 @@ func (u user) Create(ctx context.Context, user *entity.User) (uint, error) {
 	return user.ID, nil
 }
 
+func (u user) GetById(ctx context.Context, id uint) (*entity.User, error) {
+	db := ctx.DB()
+
+	var user entity.User
+	err := db.First(&user, id).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	return &user, nil
+}
+
 func (u user) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
 	db := ctx.DB()
 
@@ -48,15 +59,16 @@ func (u user) GetByRecoveryToken(ctx context.Context, recoveryToken string) (*en
 func (u user) Update(ctx context.Context, user *entity.User) error {
 	db := ctx.DB()
 
-	return db.Model(user).Updates(user).Error
+	return dbError(db.Model(user).Updates(user).Error)
 }
 
 func (u user) EmailExists(ctx context.Context, email string) (bool, error) {
 	db := ctx.DB()
 
 	var count int64
-	if err := db.Model(&entity.User{}).Where(&entity.User{Email: email}).Count(&count).Error; err != nil {
-		return false, errors.WithStack(err)
+	err := db.Model(&entity.User{}).Where(&entity.User{Email: email}).Count(&count).Error
+	if err != nil {
+		return false, dbError(err)
 	}
 	return count > 0, nil
 }
