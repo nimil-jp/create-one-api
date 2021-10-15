@@ -12,13 +12,15 @@ type User struct {
 	domain.SoftDeleteModel
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	UserName string `json:"user_name" gorm:"unique;index"`
 
 	RecoveryToken *string `json:"-" gorm:"index"`
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
 	var user = User{
-		Email: dto.Email,
+		Email:    dto.Email,
+		UserName: dto.UserName,
 	}
 
 	ok, err := user.setPassword(ctx, dto.Password, dto.PasswordConfirm)

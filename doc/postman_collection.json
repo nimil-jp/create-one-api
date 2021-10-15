@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "7b0f513e-128e-4118-b999-334927853f01",
-		"name": "Go DDD",
+		"_postman_id": "a640664e-9925-4b2e-a632-1e6ba40600b1",
+		"name": "Create One",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"password_confirm\": \"{{password}}\"\n}",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"password_confirm\": \"{{password}}\",\n    \"user_name\": \"example_user\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
