@@ -71,7 +71,7 @@ func (u *User) ResetPassword(ctx context.Context, dto *request.UserResetPassword
 	if err != nil || !ok {
 		return err
 	}
-	u.RecoveryToken = emptyString()
+	u.RecoveryToken = emptyStringPointer()
 	return nil
 }
 
