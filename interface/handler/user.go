@@ -119,3 +119,19 @@ func (u User) SetCoverImage(ctx context.Context, c *gin.Context) error {
 	c.Status(http.StatusOK)
 	return nil
 }
+
+func (u User) EditProfile(ctx context.Context, c *gin.Context) error {
+	var req request.UserEditProfile
+
+	if !bind(c, &req) {
+		return nil
+	}
+
+	err := u.userUseCase.EditProfile(ctx, &req)
+	if err != nil {
+		return err
+	}
+
+	c.Status(http.StatusOK)
+	return nil
+}

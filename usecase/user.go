@@ -29,6 +29,7 @@ type IUser interface {
 	RefreshToken(refreshToken string) (*response.UserLogin, error)
 
 	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
+	EditProfile(ctx context.Context, req *request.UserEditProfile) error
 }
 
 type user struct {
@@ -189,6 +190,31 @@ func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage)
 	}
 
 	user.SetCoverImage(string(*req))
+
+	return u.userRepo.Update(ctx, user)
+}
+
+func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) error {
+	user, err := u.userRepo.GetById(ctx, ctx.UserId())
+	if err != nil {
+		return err
+	}
+
+	user.AvatarImage = &req.AvatarImage
+	user.Name = &req.Name
+	user.About = &req.About
+	user.Introduction = &req.Introduction
+
+	user.Website = &req.Website
+	user.Youtube = &req.Youtube
+	user.Twitter = &req.Twitter
+	user.Facebook = &req.Facebook
+	user.Instagram = &req.Instagram
+	user.Pinterest = &req.Pinterest
+	user.Linkedin = &req.Linkedin
+	user.Github = &req.Github
+	user.Qiita = &req.Qiita
+	user.Zenn = &req.Zenn
 
 	return u.userRepo.Update(ctx, user)
 }

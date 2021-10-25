@@ -21,9 +21,9 @@ func post(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) 
 	group.POST(relativePath, hf(handlerFunc))
 }
 
-// func put(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
-// 	group.PUT(relativePath, hf(handlerFunc))
-// }
+func put(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
+	group.PUT(relativePath, hf(handlerFunc))
+}
 
 func patch(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
 	group.PATCH(relativePath, hf(handlerFunc))

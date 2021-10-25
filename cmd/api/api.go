@@ -89,6 +89,7 @@ func Execute() {
 				{
 					profile := user.Group("profile")
 					patch(profile, "cover-image", userHandler.SetCoverImage)
+					put(profile, "", userHandler.EditProfile)
 				}
 			}
 		}

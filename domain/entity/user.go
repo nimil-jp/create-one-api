@@ -16,6 +16,22 @@ type User struct {
 	RecoveryToken *vobj.RecoveryToken `json:"-" gorm:"index;unique"`
 
 	CoverImage *string `json:"cover_image"`
+
+	AvatarImage  *string `json:"avatar_image"`
+	Name         *string `json:"name"`
+	About        *string `json:"about"`
+	Introduction *string `json:"introduction"`
+
+	Website   *string `json:"website"`
+	Youtube   *string `json:"youtube"`
+	Twitter   *string `json:"twitter"`
+	Facebook  *string `json:"facebook"`
+	Instagram *string `json:"instagram"`
+	Pinterest *string `json:"pinterest"`
+	Linkedin  *string `json:"linkedin"`
+	Github    *string `json:"github"`
+	Qiita     *string `json:"qiita"`
+	Zenn      *string `json:"zenn"`
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
