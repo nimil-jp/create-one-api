@@ -13,4 +13,5 @@ type IUser interface {
 	Update(ctx context.Context, user *entity.User) error
 
 	EmailExists(ctx context.Context, email string) (bool, error)
+	UserNameExists(ctx context.Context, userName string) (bool, error)
 }

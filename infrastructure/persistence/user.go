@@ -64,10 +64,11 @@ func (u user) Update(ctx context.Context, user *entity.User) error {
 func (u user) EmailExists(ctx context.Context, email string) (bool, error) {
 	db := ctx.DB()
 
-	var count int64
-	err := db.Model(&entity.User{}).Where(&entity.User{Email: email}).Count(&count).Error
-	if err != nil {
-		return false, dbError(err)
-	}
-	return count > 0, nil
+	return exists(db.Model(&entity.User{}).Where(&entity.User{Email: email}))
+}
+
+func (u user) UserNameExists(ctx context.Context, userName string) (bool, error) {
+	db := ctx.DB()
+
+	return exists(db.Model(&entity.User{}).Where(&entity.User{UserName: userName}))
 }

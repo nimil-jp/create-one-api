@@ -17,3 +17,12 @@ func dbError(err error) error {
 		return errors.WithStack(err)
 	}
 }
+
+func exists(query *gorm.DB) (ok bool, err error) {
+	var count int64
+	err = query.Count(&count).Error
+	if err != nil {
+		return false, dbError(err)
+	}
+	return count > 0, nil
+}

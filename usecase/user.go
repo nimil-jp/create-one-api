@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	"go-gin-ddd/config"
+	"go-gin-ddd/config/message"
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
 	emailInfra "go-gin-ddd/infrastructure/email"
@@ -47,9 +48,16 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error)
 	if err != nil {
 		return 0, err
 	}
-
 	if email {
-		ctx.FieldError("Email", "既に使用されています")
+		ctx.FieldError("Email", message.Duplicate)
+	}
+
+	userName, err := u.userRepo.UserNameExists(ctx, req.UserName)
+	if err != nil {
+		return 0, err
+	}
+	if userName {
+		ctx.FieldError("UserName", message.Duplicate)
 	}
 
 	newUser, err := entity.NewUser(ctx, req)
