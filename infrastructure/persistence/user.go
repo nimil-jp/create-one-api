@@ -1,10 +1,9 @@
 package persistence
 
 import (
-	"github.com/pkg/errors"
-
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
+	"go-gin-ddd/domain/vobj"
 	"go-gin-ddd/pkg/context"
 )
 
@@ -18,7 +17,7 @@ func (u user) Create(ctx context.Context, user *entity.User) (uint, error) {
 	db := ctx.DB()
 
 	if err := db.Create(user).Error; err != nil {
-		return 0, errors.WithStack(err)
+		return 0, dbError(err)
 	}
 	return user.ID, nil
 }
@@ -49,7 +48,7 @@ func (u user) GetByRecoveryToken(ctx context.Context, recoveryToken string) (*en
 	db := ctx.DB()
 
 	var dest entity.User
-	err := db.Where(&entity.User{RecoveryToken: &recoveryToken}).First(&dest).Error
+	err := db.Where(&entity.User{RecoveryToken: vobj.NewRecoveryToken(recoveryToken)}).First(&dest).Error
 	if err != nil {
 		return nil, dbError(err)
 	}
