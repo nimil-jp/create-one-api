@@ -15,6 +15,7 @@ import (
 
 	"go-gin-ddd/config"
 	"go-gin-ddd/infrastructure/email"
+	"go-gin-ddd/infrastructure/gcp"
 	"go-gin-ddd/infrastructure/log"
 	"go-gin-ddd/infrastructure/persistence"
 	"go-gin-ddd/interface/handler"
@@ -62,6 +63,7 @@ func Execute() {
 	// dependencies injection
 	// ----- infrastructure -----
 	emailDriver := email.New()
+	gcs := gcp.NewGcs()
 
 	// persistence
 	userPersistence := persistence.NewUser()
@@ -70,6 +72,8 @@ func Execute() {
 	userUseCase := usecase.NewUser(emailDriver, userPersistence)
 
 	// ----- handler -----
+	signedUrlHandler := handler.NewSignedUrl(gcs)
+
 	userHandler := handler.NewUser(userUseCase)
 
 	// routes
@@ -84,6 +88,11 @@ func Execute() {
 		}
 		{
 			auth := engine.Group("", jwt.Verify(config.DefaultRealm))
+			{
+				signedUrl := auth.Group("signed-url")
+				get(signedUrl, "profile", signedUrlHandler.Profile)
+				get(signedUrl, "post", signedUrlHandler.Post)
+			}
 			{
 				user := auth.Group("user")
 				{

@@ -6,6 +6,47 @@
 	},
 	"item": [
 		{
+			"name": "SignedUrl",
+			"item": [
+				{
+					"name": "Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base}}/signed-url/profile",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"signed-url",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base}}/signed-url/post",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"signed-url",
+								"post"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "User",
 			"item": [
 				{
@@ -243,23 +284,6 @@
 					],
 					"path": [
 						"health"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "SignedURL",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base}}/signed-url",
-					"host": [
-						"{{base}}"
-					],
-					"path": [
-						"signed-url"
 					]
 				}
 			},
