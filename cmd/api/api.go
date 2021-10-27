@@ -72,7 +72,7 @@ func Execute() {
 	userUseCase := usecase.NewUser(emailDriver, userPersistence)
 
 	// ----- handler -----
-	signedUrlHandler := handler.NewSignedUrl(gcs)
+	signedURLHandler := handler.NewSignedURL(gcs)
 
 	userHandler := handler.NewUser(userUseCase)
 
@@ -89,9 +89,9 @@ func Execute() {
 		{
 			auth := engine.Group("", jwt.Verify(config.DefaultRealm))
 			{
-				signedUrl := auth.Group("signed-url")
-				get(signedUrl, "profile", signedUrlHandler.Profile)
-				get(signedUrl, "post", signedUrlHandler.Post)
+				signedURL := auth.Group("signed-url")
+				get(signedURL, "profile", signedURLHandler.Profile)
+				get(signedURL, "post", signedURLHandler.Post)
 			}
 			{
 				user := auth.Group("user")

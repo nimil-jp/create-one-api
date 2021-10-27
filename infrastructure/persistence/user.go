@@ -22,7 +22,7 @@ func (u user) Create(ctx context.Context, user *entity.User) (uint, error) {
 	return user.ID, nil
 }
 
-func (u user) GetById(ctx context.Context, id uint) (*entity.User, error) {
+func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
 	db := ctx.DB()
 
 	var user entity.User

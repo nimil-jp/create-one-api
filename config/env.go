@@ -23,7 +23,7 @@ type EnvType struct {
 		Password string `required:"true"`
 		Name     string `required:"true"`
 	}
-	Smtp struct {
+	SMTP struct {
 		Host     string `required:"true"`
 		Port     string `required:"true"`
 		User     string `required:"true"`
@@ -33,7 +33,7 @@ type EnvType struct {
 		From string `required:"true"`
 		Name string `required:"true"`
 	}
-	Gcp struct {
+	GCP struct {
 		CredentialPath string `required:"true" split_words:"true"`
 		Bucket         string `required:"true"`
 	}

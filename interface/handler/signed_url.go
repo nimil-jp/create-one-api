@@ -10,18 +10,18 @@ import (
 	"go-gin-ddd/pkg/context"
 )
 
-type SignedUrl struct {
+type SignedURL struct {
 	gcs gcp.IGcs
 }
 
-func NewSignedUrl(gcs gcp.IGcs) *SignedUrl {
-	return &SignedUrl{
+func NewSignedURL(gcs gcp.IGcs) *SignedURL {
+	return &SignedURL{
 		gcs: gcs,
 	}
 }
 
-func (h SignedUrl) Profile(_ context.Context, c *gin.Context) error {
-	res, err := h.gcs.GetSignedUrl("profile", true)
+func (h SignedURL) Profile(_ context.Context, c *gin.Context) error {
+	res, err := h.gcs.GetSignedURL("profile", true)
 	if err != nil {
 		return err
 	}
@@ -30,8 +30,8 @@ func (h SignedUrl) Profile(_ context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (h SignedUrl) Post(ctx context.Context, c *gin.Context) error {
-	res, err := h.gcs.GetSignedUrl(fmt.Sprintf("post/%d", ctx.UserId()), true)
+func (h SignedURL) Post(ctx context.Context, c *gin.Context) error {
+	res, err := h.gcs.GetSignedURL(fmt.Sprintf("post/%d", ctx.UserID()), true)
 	if err != nil {
 		return err
 	}

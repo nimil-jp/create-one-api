@@ -109,7 +109,7 @@ func (u user) ResetPasswordRequest(
 			}
 
 			err = u.email.Send(user.Email, emailInfra.UserResetPasswordRequest{
-				Url:   config.Env.App.URL,
+				URL:   config.Env.App.URL,
 				Token: user.RecoveryToken.String(),
 			})
 			if err != nil {
@@ -184,7 +184,7 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 }
 
 func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {
-	user, err := u.userRepo.GetById(ctx, ctx.UserId())
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID())
 	if err != nil {
 		return err
 	}
@@ -195,7 +195,7 @@ func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage)
 }
 
 func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) error {
-	user, err := u.userRepo.GetById(ctx, ctx.UserId())
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID())
 	if err != nil {
 		return err
 	}

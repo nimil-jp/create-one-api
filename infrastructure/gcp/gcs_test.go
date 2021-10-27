@@ -37,9 +37,9 @@ func Test_gcs_GetSignedUrl(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gc := NewGcs()
 
-			got, err := gc.GetSignedUrl(tt.args.dir, tt.args.public)
+			got, err := gc.GetSignedURL(tt.args.dir, tt.args.public)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("GetSignedUrl() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("GetSignedURL() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
@@ -87,7 +87,7 @@ func Test_gcs_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			objects := gcp.GcsClient().Bucket(config.Env.Gcp.Bucket).Objects(ctx, &storage.Query{
+			objects := gcp.GcsClient().Bucket(config.Env.GCP.Bucket).Objects(ctx, &storage.Query{
 				Prefix: "test/",
 			})
 

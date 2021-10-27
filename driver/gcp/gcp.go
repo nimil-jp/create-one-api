@@ -14,7 +14,7 @@ var (
 )
 
 func init() {
-	credBytes, err := ioutil.ReadFile(config.Env.Gcp.CredentialPath)
+	credBytes, err := ioutil.ReadFile(config.Env.GCP.CredentialPath)
 	if err != nil {
 		panic(err)
 	}
