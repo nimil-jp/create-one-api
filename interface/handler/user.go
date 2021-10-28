@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nimil-jp/gin-utils/context"
 
-	"go-gin-ddd/pkg/context"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/usecase"
 )

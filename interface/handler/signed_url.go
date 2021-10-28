@@ -6,8 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/nimil-jp/gin-utils/context"
+
 	"go-gin-ddd/infrastructure/gcp"
-	"go-gin-ddd/pkg/context"
 )
 
 type SignedURL struct {

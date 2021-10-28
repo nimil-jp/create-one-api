@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/nimil-jp/gin-utils/context"
+	"github.com/nimil-jp/gin-utils/xerrors"
+
 	"go-gin-ddd/domain"
-	"go-gin-ddd/pkg/context"
-	"go-gin-ddd/pkg/xerrors"
 	"go-gin-ddd/resource/request"
 )
 

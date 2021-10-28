@@ -12,14 +12,16 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/ken109/gin-jwt"
+	"github.com/nimil-jp/gin-utils/http/middleware"
+	"github.com/nimil-jp/gin-utils/http/router"
 
 	"go-gin-ddd/config"
+	"go-gin-ddd/driver/rdb"
 	"go-gin-ddd/infrastructure/email"
 	"go-gin-ddd/infrastructure/gcp"
 	"go-gin-ddd/infrastructure/log"
 	"go-gin-ddd/infrastructure/persistence"
 	"go-gin-ddd/interface/handler"
-	"go-gin-ddd/interface/middleware"
 	"go-gin-ddd/usecase"
 )
 
@@ -42,8 +44,8 @@ func Execute() {
 
 	engine.GET("health", func(c *gin.Context) { c.Status(http.StatusOK) })
 
-	engine.Use(middleware.Log(logger, time.RFC3339, false))
-	engine.Use(middleware.RecoveryWithLog(logger, true))
+	engine.Use(middleware.Log(log.ZapLogger(), time.RFC3339, false))
+	engine.Use(middleware.RecoveryWithLog(log.ZapLogger(), true))
 
 	// cors
 	engine.Use(
@@ -79,36 +81,36 @@ func Execute() {
 	userHandler := handler.NewUser(userUseCase)
 	articleHandler := handler.NewArticle(articleUseCase)
 
-	r := newRouter(engine)
+	r := router.New(engine, rdb.Get)
 
-	r.group("user", nil, func(r *router) {
-		r.post("", userHandler.Create)
-		r.post("login", userHandler.Login)
-		r.get("refresh-token", userHandler.RefreshToken)
-		r.patch("reset-password-request", userHandler.ResetPasswordRequest)
-		r.patch("reset-password", userHandler.ResetPassword)
+	r.Group("user", nil, func(r *router.Router) {
+		r.Post("", userHandler.Create)
+		r.Post("login", userHandler.Login)
+		r.Get("refresh-token", userHandler.RefreshToken)
+		r.Patch("reset-password-request", userHandler.ResetPasswordRequest)
+		r.Patch("reset-password", userHandler.ResetPassword)
 	})
 
-	r.group("", []gin.HandlerFunc{jwt.Verify(config.DefaultRealm)}, func(r *router) {
-		r.group("signed-url", nil, func(r *router) {
-			r.get("profile", signedURLHandler.Profile)
-			r.get("article", signedURLHandler.Article)
+	r.Group("", []gin.HandlerFunc{jwt.Verify(config.DefaultRealm)}, func(r *router.Router) {
+		r.Group("signed-url", nil, func(r *router.Router) {
+			r.Get("profile", signedURLHandler.Profile)
+			r.Get("article", signedURLHandler.Article)
 		})
 
-		r.group("user", nil, func(r *router) {
-			r.get("me", userHandler.GetMe)
+		r.Group("user", nil, func(r *router.Router) {
+			r.Get("me", userHandler.GetMe)
 
-			r.group("profile", nil, func(r *router) {
-				r.patch("cover-image", userHandler.SetCoverImage)
-				r.put("", userHandler.EditProfile)
+			r.Group("profile", nil, func(r *router.Router) {
+				r.Patch("cover-image", userHandler.SetCoverImage)
+				r.Put("", userHandler.EditProfile)
 			})
 		})
 
-		r.group("article", nil, func(r *router) {
-			r.post("", articleHandler.Create)
-			r.get(":id", articleHandler.GetByID)
-			r.put(":id", articleHandler.Update)
-			r.delete(":id", articleHandler.Delete)
+		r.Group("article", nil, func(r *router.Router) {
+			r.Post("", articleHandler.Create)
+			r.Get(":id", articleHandler.GetByID)
+			r.Put(":id", articleHandler.Update)
+			r.Delete(":id", articleHandler.Delete)
 		})
 	})
 

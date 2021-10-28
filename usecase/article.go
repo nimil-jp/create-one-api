@@ -1,9 +1,10 @@
 package usecase
 
 import (
+	"github.com/nimil-jp/gin-utils/context"
+
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
-	"go-gin-ddd/pkg/context"
 	"go-gin-ddd/resource/request"
 )
 
