@@ -11,37 +11,52 @@ import (
 	"go-gin-ddd/pkg/xerrors"
 )
 
+type router struct {
+	g *gin.RouterGroup
+}
+
+func newRouter(engine *gin.Engine) *router {
+	return &router{g: engine.Group("")}
+}
+
+func (r *router) group(relativePath string, handlers []gin.HandlerFunc, fn func(r *router)) {
+	if handlers == nil {
+		handlers = []gin.HandlerFunc{}
+	}
+	fn(&router{g: r.g.Group(relativePath, handlers...)})
+}
+
 type handlerFunc func(ctx context.Context, c *gin.Context) error
 
-func get(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
-	group.GET(relativePath, hf(handlerFunc))
+func (r *router) get(relativePath string, handlerFunc handlerFunc) {
+	r.g.GET(relativePath, wrapperFunc(handlerFunc))
 }
 
-func post(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
-	group.POST(relativePath, hf(handlerFunc))
+func (r *router) post(relativePath string, handlerFunc handlerFunc) {
+	r.g.POST(relativePath, wrapperFunc(handlerFunc))
 }
 
-func put(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
-	group.PUT(relativePath, hf(handlerFunc))
+func (r *router) put(relativePath string, handlerFunc handlerFunc) {
+	r.g.PUT(relativePath, wrapperFunc(handlerFunc))
 }
 
-func patch(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
-	group.PATCH(relativePath, hf(handlerFunc))
+func (r *router) patch(relativePath string, handlerFunc handlerFunc) {
+	r.g.PATCH(relativePath, wrapperFunc(handlerFunc))
 }
 
-// func delete(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
-// 	group.DELETE(relativePath, hf(handlerFunc))
-// }
+func (r *router) delete(relativePath string, handlerFunc handlerFunc) {
+	r.g.DELETE(relativePath, wrapperFunc(handlerFunc))
+}
 
-// func options(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
-// 	group.OPTIONS(relativePath, hf(handlerFunc))
-// }
+func (r *router) options(relativePath string, handlerFunc handlerFunc) {
+	r.g.OPTIONS(relativePath, wrapperFunc(handlerFunc))
+}
 
-// func head(group *gin.RouterGroup, relativePath string, handlerFunc handlerFunc) {
-// 	group.HEAD(relativePath, hf(handlerFunc))
-// }
+func (r *router) head(relativePath string, handlerFunc handlerFunc) {
+	r.g.HEAD(relativePath, wrapperFunc(handlerFunc))
+}
 
-func hf(handlerFunc handlerFunc) gin.HandlerFunc {
+func wrapperFunc(handlerFunc handlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx context.Context
 

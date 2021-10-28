@@ -32,6 +32,8 @@ type User struct {
 	Github    *string `json:"github"`
 	Qiita     *string `json:"qiita"`
 	Zenn      *string `json:"zenn"`
+
+	Articles []Article `json:"articles"`
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {

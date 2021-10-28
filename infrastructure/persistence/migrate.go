@@ -8,6 +8,7 @@ import (
 func init() {
 	err := rdb.Get().AutoMigrate(
 		&entity.User{},
+		&entity.Article{},
 	)
 	if err != nil {
 		panic(err)

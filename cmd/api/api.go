@@ -67,42 +67,50 @@ func Execute() {
 
 	// persistence
 	userPersistence := persistence.NewUser()
+	articlePersistence := persistence.NewArticle()
 
 	// ----- use case -----
 	userUseCase := usecase.NewUser(emailDriver, userPersistence)
+	articleUseCase := usecase.NewArticle(articlePersistence)
 
 	// ----- handler -----
 	signedURLHandler := handler.NewSignedURL(gcs)
 
 	userHandler := handler.NewUser(userUseCase)
+	articleHandler := handler.NewArticle(articleUseCase)
 
-	// routes
-	{
-		{
-			user := engine.Group("user")
-			post(user, "", userHandler.Create)
-			post(user, "login", userHandler.Login)
-			get(user, "refresh-token", userHandler.RefreshToken)
-			patch(user, "reset-password-request", userHandler.ResetPasswordRequest)
-			patch(user, "reset-password", userHandler.ResetPassword)
-		}
-		{
-			auth := engine.Group("", jwt.Verify(config.DefaultRealm))
-			{
-				signedURL := auth.Group("signed-url")
-				get(signedURL, "profile", signedURLHandler.Profile)
-				get(signedURL, "post", signedURLHandler.Post)
-			}
-			{
-				user := auth.Group("user")
-				{
-					profile := user.Group("profile")
-					patch(profile, "cover-image", userHandler.SetCoverImage)
-					put(profile, "", userHandler.EditProfile)
-				}
-			}
-		}
-	}
+	r := newRouter(engine)
+
+	r.group("user", nil, func(r *router) {
+		r.post("", userHandler.Create)
+		r.post("login", userHandler.Login)
+		r.get("refresh-token", userHandler.RefreshToken)
+		r.patch("reset-password-request", userHandler.ResetPasswordRequest)
+		r.patch("reset-password", userHandler.ResetPassword)
+	})
+
+	r.group("", []gin.HandlerFunc{jwt.Verify(config.DefaultRealm)}, func(r *router) {
+		r.group("signed-url", nil, func(r *router) {
+			r.get("profile", signedURLHandler.Profile)
+			r.get("article", signedURLHandler.Article)
+		})
+
+		r.group("user", nil, func(r *router) {
+			r.get("me", userHandler.GetMe)
+
+			r.group("profile", nil, func(r *router) {
+				r.patch("cover-image", userHandler.SetCoverImage)
+				r.put("", userHandler.EditProfile)
+			})
+		})
+
+		r.group("article", nil, func(r *router) {
+			r.post("", articleHandler.Create)
+			r.get(":id", articleHandler.GetByID)
+			r.put(":id", articleHandler.Update)
+			r.delete(":id", articleHandler.Delete)
+		})
+	})
 
 	logger.Info("Succeeded in setting up routes.")
 

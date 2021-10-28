@@ -104,6 +104,16 @@ func (u User) RefreshToken(_ context.Context, c *gin.Context) error {
 	return nil
 }
 
+func (u User) GetMe(ctx context.Context, c *gin.Context) error {
+	user, err := u.userUseCase.GetByID(ctx, ctx.UserID())
+	if err != nil {
+		return err
+	}
+
+	c.JSONP(http.StatusOK, user)
+	return nil
+}
+
 func (u User) SetCoverImage(ctx context.Context, c *gin.Context) error {
 	var req request.UserSetCoverImage
 

@@ -28,6 +28,7 @@ type IUser interface {
 	Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error)
 	RefreshToken(refreshToken string) (*response.UserLogin, error)
 
+	GetByID(ctx context.Context, id uint) (*entity.User, error)
 	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
 	EditProfile(ctx context.Context, req *request.UserEditProfile) error
 }
@@ -181,6 +182,10 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 		return nil, nil
 	}
 	return &res, nil
+}
+
+func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
+	return u.userRepo.GetByID(ctx, id)
 }
 
 func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {
