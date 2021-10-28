@@ -14,7 +14,7 @@ type User struct {
 	Password vobj.Password `json:"-"`
 	UserName string        `json:"user_name" validate:"required" gorm:"unique;index"`
 
-	RecoveryToken *vobj.RecoveryToken `json:"-" gorm:"index;unique"`
+	RecoveryToken *vobj.RecoveryToken `json:"-"`
 
 	CoverImage *string `json:"cover_image"`
 
@@ -34,7 +34,9 @@ type User struct {
 	Qiita     *string `json:"qiita"`
 	Zenn      *string `json:"zenn"`
 
-	Articles []Article `json:"articles"`
+	Articles   []*Article `json:"articles"`
+	Followings []*User    `json:"followings" gorm:"many2many:user_follows;joinForeignKey:user_id;joinReferences:following_id"`
+	Followers  []*User    `json:"followers" gorm:"many2many:user_follows;joinForeignKey:following_id;joinReferences:user_id"`
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {

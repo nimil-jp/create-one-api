@@ -32,6 +32,8 @@ type IUser interface {
 	GetByID(ctx context.Context, id uint) (*entity.User, error)
 	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
 	EditProfile(ctx context.Context, req *request.UserEditProfile) error
+
+	Follow(ctx context.Context, id uint, follow bool) error
 }
 
 type user struct {
@@ -223,4 +225,8 @@ func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) err
 	user.Zenn = &req.Zenn
 
 	return u.userRepo.Update(ctx, user)
+}
+
+func (u user) Follow(ctx context.Context, id uint, follow bool) error {
+	return u.userRepo.Follow(ctx, id, follow)
 }

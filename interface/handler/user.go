@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nimil-jp/gin-utils/context"
+	"github.com/nimil-jp/gin-utils/http/router"
 
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/usecase"
@@ -144,4 +145,21 @@ func (u User) EditProfile(ctx context.Context, c *gin.Context) error {
 
 	c.Status(http.StatusOK)
 	return nil
+}
+
+func (u User) Follow(follow bool) router.HandlerFunc {
+	return func(ctx context.Context, c *gin.Context) error {
+		id, err := uintParam(c, "id")
+		if err != nil {
+			return err
+		}
+
+		err = u.userUseCase.Follow(ctx, id, follow)
+		if err != nil {
+			return err
+		}
+
+		c.Status(http.StatusOK)
+		return nil
+	}
 }
