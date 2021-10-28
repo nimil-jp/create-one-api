@@ -1,9 +1,10 @@
 package entity
 
 import (
+	"github.com/nimil-jp/gin-utils/context"
+
 	"go-gin-ddd/domain"
 	"go-gin-ddd/domain/vobj"
-	"go-gin-ddd/pkg/context"
 	"go-gin-ddd/resource/request"
 )
 
@@ -32,6 +33,8 @@ type User struct {
 	Github    *string `json:"github"`
 	Qiita     *string `json:"qiita"`
 	Zenn      *string `json:"zenn"`
+
+	Articles []Article `json:"articles"`
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {

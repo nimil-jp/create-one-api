@@ -6,8 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/nimil-jp/gin-utils/context"
+
 	"go-gin-ddd/infrastructure/gcp"
-	"go-gin-ddd/pkg/context"
 )
 
 type SignedURL struct {
@@ -20,8 +21,8 @@ func NewSignedURL(gcs gcp.IGcs) *SignedURL {
 	}
 }
 
-func (h SignedURL) Profile(_ context.Context, c *gin.Context) error {
-	res, err := h.gcs.GetSignedURL("profile", true)
+func (h SignedURL) Profile(ctx context.Context, c *gin.Context) error {
+	res, err := h.gcs.GetSignedURL(fmt.Sprintf("profile/%d", ctx.UserID()), true)
 	if err != nil {
 		return err
 	}
@@ -30,8 +31,8 @@ func (h SignedURL) Profile(_ context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (h SignedURL) Post(ctx context.Context, c *gin.Context) error {
-	res, err := h.gcs.GetSignedURL(fmt.Sprintf("post/%d", ctx.UserID()), true)
+func (h SignedURL) Article(ctx context.Context, c *gin.Context) error {
+	res, err := h.gcs.GetSignedURL(fmt.Sprintf("article/%d", ctx.UserID()), true)
 	if err != nil {
 		return err
 	}

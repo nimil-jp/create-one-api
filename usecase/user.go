@@ -6,13 +6,14 @@ import (
 	jwt "github.com/ken109/gin-jwt"
 	"github.com/pkg/errors"
 
+	"github.com/nimil-jp/gin-utils/context"
+	"github.com/nimil-jp/gin-utils/xerrors"
+
 	"go-gin-ddd/config"
 	"go-gin-ddd/config/message"
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
 	emailInfra "go-gin-ddd/infrastructure/email"
-	"go-gin-ddd/pkg/context"
-	"go-gin-ddd/pkg/xerrors"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/resource/response"
 )
@@ -28,6 +29,7 @@ type IUser interface {
 	Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error)
 	RefreshToken(refreshToken string) (*response.UserLogin, error)
 
+	GetByID(ctx context.Context, id uint) (*entity.User, error)
 	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
 	EditProfile(ctx context.Context, req *request.UserEditProfile) error
 }
@@ -181,6 +183,10 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 		return nil, nil
 	}
 	return &res, nil
+}
+
+func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
+	return u.userRepo.GetByID(ctx, id)
 }
 
 func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {

@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nimil-jp/gin-utils/context"
 
-	"go-gin-ddd/pkg/context"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/usecase"
 )
@@ -101,6 +101,16 @@ func (u User) RefreshToken(_ context.Context, c *gin.Context) error {
 	}
 
 	c.JSON(http.StatusOK, res)
+	return nil
+}
+
+func (u User) GetMe(ctx context.Context, c *gin.Context) error {
+	user, err := u.userUseCase.GetByID(ctx, ctx.UserID())
+	if err != nil {
+		return err
+	}
+
+	c.JSONP(http.StatusOK, user)
 	return nil
 }
 
