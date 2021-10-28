@@ -3,6 +3,7 @@ package persistence
 import (
 	"github.com/nimil-jp/gin-utils/context"
 
+	"go-gin-ddd/domain"
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
 	"go-gin-ddd/domain/vobj"
@@ -72,4 +73,22 @@ func (u user) UserNameExists(ctx context.Context, userName string) (bool, error)
 	db := ctx.DB()
 
 	return exists(db.Model(&entity.User{}).Where(&entity.User{UserName: userName}))
+}
+
+func (u user) Follow(ctx context.Context, id uint, follow bool) error {
+	db := ctx.DB()
+
+	from := entity.User{
+		SoftDeleteModel: domain.SoftDeleteModel{ID: ctx.UserID()},
+	}
+
+	to := entity.User{
+		SoftDeleteModel: domain.SoftDeleteModel{ID: id},
+	}
+
+	if follow {
+		return db.Model(&from).Association("Followings").Append(&to)
+	} else {
+		return db.Model(&from).Association("Followings").Delete(&to)
+	}
 }

@@ -15,4 +15,6 @@ type IUser interface {
 
 	EmailExists(ctx context.Context, email string) (bool, error)
 	UserNameExists(ctx context.Context, userName string) (bool, error)
+
+	Follow(ctx context.Context, id uint, follow bool) error
 }

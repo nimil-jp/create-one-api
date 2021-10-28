@@ -99,6 +99,8 @@ func Execute() {
 
 		r.Group("user", nil, func(r *router.Router) {
 			r.Get("me", userHandler.GetMe)
+			r.Put("follow/:id", userHandler.Follow(true))
+			r.Put("unfollow/:id", userHandler.Follow(false))
 
 			r.Group("profile", nil, func(r *router.Router) {
 				r.Patch("cover-image", userHandler.SetCoverImage)
