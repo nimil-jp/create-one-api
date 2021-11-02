@@ -5,7 +5,7 @@ go 1.17
 require (
 	cloud.google.com/go/storage v1.18.0
 	github.com/decred/dcrd/dcrec/secp256k1/v3 v3.0.0 // indirect
-	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-playground/locales v0.14.0 // indirect
@@ -52,15 +52,19 @@ require (
 )
 
 require (
-	github.com/nimil-jp/gin-utils v0.0.3
+	github.com/nimil-jp/gin-utils v0.0.5
 	jaytaylor.com/html2text v0.0.0-20211013233858-90c08c5027d3
 )
 
 require (
 	cloud.google.com/go v0.97.0 // indirect
+	github.com/gin-contrib/sessions v0.0.4 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
+	github.com/gorilla/context v1.1.1 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
+	github.com/gorilla/sessions v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect

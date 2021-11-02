@@ -8,8 +8,14 @@ type UserCreate struct {
 }
 
 type UserLogin struct {
+	Session  bool   `json:"session"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type UserRefreshToken struct {
+	Session      bool   `json:"session"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type UserResetPasswordRequest struct {

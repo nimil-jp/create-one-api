@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/ken109/gin-jwt"
 	"github.com/nimil-jp/gin-utils/http/middleware"
@@ -48,19 +47,10 @@ func Execute() {
 	engine.Use(middleware.RecoveryWithLog(log.ZapLogger(), true))
 
 	// cors
-	engine.Use(
-		cors.New(
-			cors.Config{
-				AllowOriginFunc: func(origin string) bool {
-					return true
-				},
-				AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "X-Request-Id"},
-				AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
-				AllowCredentials: true,
-				MaxAge:           12 * time.Hour,
-			},
-		),
-	)
+	engine.Use(middleware.Cors(nil))
+
+	// cookie
+	engine.Use(middleware.Session(config.UserSession, config.Env.App.Secret, nil))
 
 	// dependencies injection
 	// ----- infrastructure -----
@@ -86,12 +76,12 @@ func Execute() {
 	r.Group("user", nil, func(r *router.Router) {
 		r.Post("", userHandler.Create)
 		r.Post("login", userHandler.Login)
-		r.Get("refresh-token", userHandler.RefreshToken)
+		r.Post("refresh-token", userHandler.RefreshToken)
 		r.Patch("reset-password-request", userHandler.ResetPasswordRequest)
 		r.Patch("reset-password", userHandler.ResetPassword)
 	})
 
-	r.Group("", []gin.HandlerFunc{jwt.Verify(config.DefaultRealm)}, func(r *router.Router) {
+	r.Group("", []gin.HandlerFunc{middleware.Authentication(config.DefaultRealm)}, func(r *router.Router) {
 		r.Group("signed-url", nil, func(r *router.Router) {
 			r.Get("profile", signedURLHandler.Profile)
 			r.Get("article", signedURLHandler.Article)

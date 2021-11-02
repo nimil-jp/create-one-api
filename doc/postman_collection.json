@@ -142,11 +142,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var res = pm.response.json()",
+									"if (!JSON.parse(pm.request.body.raw).session) {",
+									"    var res = pm.response.json()",
 									"",
-									"pm.collectionVariables.set(\"token\", res[\"token\"])",
-									"pm.collectionVariables.set(\"refresh_token\", res[\"refresh_token\"])",
-									""
+									"    pm.collectionVariables.set(\"token\", res[\"token\"])",
+									"    pm.collectionVariables.set(\"refresh_token\", res[\"refresh_token\"])",
+									"}"
 								],
 								"type": "text/javascript"
 							}
@@ -157,7 +158,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
+							"raw": "{\n    \"session\": true,\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -184,33 +185,37 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var res = pm.response.json()",
+									"if (!JSON.parse(pm.request.body.raw).session) {",
+									"    var res = pm.response.json()",
 									"",
-									"pm.collectionVariables.set(\"token\", res[\"token\"])",
-									"pm.collectionVariables.set(\"refresh_token\", res[\"refresh_token\"])",
-									""
+									"    pm.collectionVariables.set(\"token\", res[\"token\"])",
+									"    pm.collectionVariables.set(\"refresh_token\", res[\"refresh_token\"])",
+									"}"
 								],
 								"type": "text/javascript"
 							}
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"session\": true,\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base}}/user/refresh-token?refresh_token={{refresh_token}}",
+							"raw": "{{base}}/user/refresh-token",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
 								"user",
 								"refresh-token"
-							],
-							"query": [
-								{
-									"key": "refresh_token",
-									"value": "{{refresh_token}}"
-								}
 							]
 						}
 					},
@@ -461,7 +466,16 @@
 					"",
 					"if (url && refresh_token) {",
 					"    pm.sendRequest(",
-					"        `${url}/user/refresh-token?refresh_token=${refresh_token}`, ",
+					"        {",
+					"            url: `${url}/user/refresh-token`,",
+					"            method: \"POST\",",
+					"            body: {",
+					"                mode: \"raw\",",
+					"                raw: {",
+					"                    refresh_token",
+					"                }",
+					"            }",
+					"        }, ",
 					"        (err, res) => {",
 					"            pm.collectionVariables.set(\"token\", res.json()[\"token\"])",
 					"            pm.collectionVariables.set(\"refresh_token\", res.json()[\"refresh_token\"])",
