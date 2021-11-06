@@ -25,7 +25,7 @@ func NewSupport(tr repository.ISupport, ur repository.IUser) ISupport {
 }
 
 func (a support) Create(ctx context.Context, req *request.SupportCreate) (uint, error) {
-	toUser, err := a.userRepo.GetByID(ctx, req.ToID)
+	toUser, err := a.userRepo.GetByID(ctx, req.ToID, &repository.UserGetByIDOption{Preload: true})
 	if err != nil {
 		return 0, err
 	}

@@ -1,10 +1,13 @@
 package usecase
 
 import (
+	"fmt"
 	"net/http"
 
 	jwt "github.com/ken109/gin-jwt"
+	"github.com/nimil-jp/gin-utils/util"
 	"github.com/pkg/errors"
+	"github.com/thoas/go-funk"
 
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/xerrors"
@@ -37,19 +40,24 @@ type IUser interface {
 	Follow(ctx context.Context, id uint, follow bool) error
 
 	ConnectPaypal(ctx context.Context) (string, error)
+
+	// Timeline のリターンがArticleになっているが、複数コンテンツに対応した場合にはinterface{}型になる
+	Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error)
 }
 
 type user struct {
-	userRepo repository.IUser
-	email    emailInfra.IEmail
-	paypal   paypal.IPaypal
+	userRepo    repository.IUser
+	articleRepo repository.IArticle
+	email       emailInfra.IEmail
+	paypal      paypal.IPaypal
 }
 
-func NewUser(tr repository.IUser, email emailInfra.IEmail, pp paypal.IPaypal) IUser {
+func NewUser(ur repository.IUser, ar repository.IArticle, email emailInfra.IEmail, pp paypal.IPaypal) IUser {
 	return &user{
-		userRepo: tr,
-		email:    email,
-		paypal:   pp,
+		userRepo:    ur,
+		articleRepo: ar,
+		email:       email,
+		paypal:      pp,
 	}
 }
 
@@ -193,11 +201,11 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 }
 
 func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
-	return u.userRepo.GetByID(ctx, id)
+	return u.userRepo.GetByID(ctx, id, &repository.UserGetByIDOption{Preload: true, Limit: 6})
 }
 
 func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID())
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), nil)
 	if err != nil {
 		return err
 	}
@@ -208,7 +216,7 @@ func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage)
 }
 
 func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) error {
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID())
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), nil)
 	if err != nil {
 		return err
 	}
@@ -237,7 +245,7 @@ func (u user) Follow(ctx context.Context, id uint, follow bool) error {
 }
 
 func (u user) ConnectPaypal(ctx context.Context) (string, error) {
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID())
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -247,4 +255,57 @@ func (u user) ConnectPaypal(ctx context.Context) (string, error) {
 	}
 
 	return u.paypal.ConnectURL(user.Email)
+}
+
+type TimelineKind string
+
+const (
+	TimelineFollowing  TimelineKind = "following"
+	TimelineSupporting TimelineKind = "supporting"
+	TimelineOther      TimelineKind = "other"
+)
+
+var ErrInvalidTimelineKind = fmt.Errorf("invalid timeline kind")
+
+func (v TimelineKind) String() string {
+	return string(v)
+}
+
+func (v TimelineKind) Valid() error {
+	switch v {
+	case TimelineFollowing, TimelineSupporting, TimelineOther:
+		return nil
+	default:
+		return errors.Wrapf(ErrInvalidTimelineKind, "get %s", v)
+	}
+}
+
+func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error) {
+	articleOption := repository.ArticleSearchOption{
+		ExcludeUserIDs: []uint{ctx.UserID()},
+	}
+
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{Preload: true})
+	if err != nil {
+		return nil, err
+	}
+
+	if funk.Contains(kinds, TimelineFollowing) {
+		articleOption.UserIDs = append(articleOption.UserIDs, user.FollowingsID()...)
+	} else {
+		articleOption.ExcludeUserIDs = append(articleOption.ExcludeUserIDs, user.FollowingsID()...)
+	}
+
+	if funk.Contains(kinds, TimelineSupporting) {
+		articleOption.UserIDs = append(articleOption.UserIDs, user.SupportsToID()...)
+	} else {
+		articleOption.ExcludeUserIDs = append(articleOption.ExcludeUserIDs, user.SupportsToID()...)
+	}
+
+	articles, _, err := u.articleRepo.Search(ctx, paging, articleOption)
+	if err != nil {
+		return nil, err
+	}
+
+	return articles, nil
 }

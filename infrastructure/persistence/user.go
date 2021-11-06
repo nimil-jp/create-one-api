@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"github.com/nimil-jp/gin-utils/context"
+	"gorm.io/gorm"
 
 	"go-gin-ddd/domain"
 	"go-gin-ddd/domain/entity"
@@ -24,17 +25,24 @@ func (u user) Create(ctx context.Context, user *entity.User) (uint, error) {
 	return user.ID, nil
 }
 
-func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
+func (u user) GetByID(ctx context.Context, id uint, option *repository.UserGetByIDOption) (*entity.User, error) {
 	db := ctx.DB()
 
 	var user entity.User
 	err := db.
-		Preload("Followings", limit(6)).
-		Preload("Followers", limit(6)).
-		Preload("SupportsTo", limit(6)).
-		Preload("SupportsTo.ToUser").
-		Preload("SupportsFrom", limit(6)).
-		Preload("SupportsFrom.User").
+		Scopes(func(db *gorm.DB) *gorm.DB {
+			if option != nil {
+				if option.Preload {
+					db.Preload("Followings", limit(option.Limit)).
+						Preload("Followers", limit(option.Limit)).
+						Preload("SupportsTo", limit(option.Limit)).
+						Preload("SupportsTo.ToUser").
+						Preload("SupportsFrom", limit(option.Limit)).
+						Preload("SupportsFrom.User")
+				}
+			}
+			return db
+		}).
 		First(&user, id).Error
 	if err != nil {
 		return nil, dbError(err)

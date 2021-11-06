@@ -510,7 +510,8 @@
 					"query": [
 						{
 							"key": "kind",
-							"value": "following,supporting,other"
+							"value": "following,supporting,other",
+							"description": "following,supporting,other"
 						}
 					]
 				}

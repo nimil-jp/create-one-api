@@ -6,9 +6,14 @@ import (
 	"go-gin-ddd/domain/entity"
 )
 
+type UserGetByIDOption struct {
+	Preload bool
+	Limit   int
+}
+
 type IUser interface {
 	Create(ctx context.Context, user *entity.User) (uint, error)
-	GetByID(ctx context.Context, id uint) (*entity.User, error)
+	GetByID(ctx context.Context, id uint, option *UserGetByIDOption) (*entity.User, error)
 	GetByEmail(ctx context.Context, email string) (*entity.User, error)
 	GetByRecoveryToken(ctx context.Context, recoveryToken string) (*entity.User, error)
 	Update(ctx context.Context, user *entity.User) error

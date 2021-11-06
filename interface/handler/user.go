@@ -2,11 +2,13 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/http/router"
+	"github.com/nimil-jp/gin-utils/util"
 
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/usecase"
@@ -191,6 +193,29 @@ func (u User) Follow(follow bool) router.HandlerFunc {
 		c.Status(http.StatusOK)
 		return nil
 	}
+}
+
+func (u User) Timeline(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	var kinds []usecase.TimelineKind
+
+	kindsString := strings.Split(c.Query("kind"), ",")
+	for _, kindString := range kindsString {
+		kind := usecase.TimelineKind(kindString)
+		if err := kind.Valid(); err != nil {
+			return err
+		}
+		kinds = append(kinds, kind)
+	}
+
+	contents, err := u.userUseCase.Timeline(ctx, paging, kinds)
+	if err != nil {
+		return err
+	}
+
+	c.PureJSON(http.StatusOK, contents)
+	return nil
 }
 
 func (u User) ConnectPaypal(ctx context.Context, c *gin.Context) error {

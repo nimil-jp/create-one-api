@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"github.com/nimil-jp/gin-utils/context"
+	"github.com/nimil-jp/gin-utils/util"
 
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
@@ -43,4 +44,32 @@ func (u article) Delete(ctx context.Context, id uint) error {
 	db := ctx.DB()
 
 	return db.Delete(&entity.Article{}, id).Error
+}
+
+func (u article) Search(ctx context.Context, paging *util.Paging, option repository.ArticleSearchOption) ([]*entity.Article, uint, error) {
+	db := ctx.DB()
+
+	var articles []*entity.Article
+	query := db.
+		Model(&entity.Article{}).
+		Preload("User")
+
+	if len(option.UserIDs) > 0 {
+		query.Where("user_id IN ?", option.UserIDs)
+	}
+	if len(option.ExcludeUserIDs) > 0 {
+		query.Where("user_id NOT IN ?", option.ExcludeUserIDs)
+	}
+
+	count, err := paging.GetCount(query)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = query.Find(&articles).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return articles, count, nil
 }

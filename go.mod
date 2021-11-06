@@ -53,7 +53,8 @@ require (
 
 require (
 	github.com/gin-contrib/sessions v0.0.4
-	github.com/nimil-jp/gin-utils v0.0.5
+	github.com/nimil-jp/gin-utils v0.0.7
+	github.com/thoas/go-funk v0.9.1
 	gorm.io/datatypes v1.0.3
 	jaytaylor.com/html2text v0.0.0-20211013233858-90c08c5027d3
 )

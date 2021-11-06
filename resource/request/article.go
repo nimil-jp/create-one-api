@@ -6,7 +6,7 @@ import (
 
 type ArticleCreate struct {
 	Title       string    `json:"title"`
-	Content     string    `json:"content"`
+	Body        string    `json:"body"`
 	Draft       bool      `json:"draft"`
 	PublishedAt time.Time `json:"published_at"`
 }

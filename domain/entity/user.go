@@ -93,3 +93,19 @@ func (u *User) SetPaypal(merchantID string) {
 	u.PaypalConnected = true
 	u.PaypalMerchantID = &merchantID
 }
+
+func (u User) FollowingsID() []uint {
+	var ids []uint
+	for _, following := range u.Followings {
+		ids = append(ids, following.ID)
+	}
+	return ids
+}
+
+func (u User) SupportsToID() []uint {
+	var ids []uint
+	for _, support := range u.SupportsTo {
+		ids = append(ids, support.ToUser.ID)
+	}
+	return ids
+}

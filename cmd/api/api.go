@@ -51,7 +51,7 @@ func Execute() {
 	engine.Use(middleware.Cors(nil))
 
 	// cookie
-	engine.Use(middleware.Session(config.UserSession, config.Env.App.Secret, nil))
+	engine.Use(middleware.Session([]string{config.UserSession}, config.Env.App.Secret, nil))
 
 	// dependencies injection
 	// ----- infrastructure -----
@@ -65,7 +65,7 @@ func Execute() {
 	articlePersistence := persistence.NewArticle()
 
 	// ----- use case -----
-	userUseCase := usecase.NewUser(userPersistence, emailInfra, paypalInfra)
+	userUseCase := usecase.NewUser(userPersistence, articlePersistence, emailInfra, paypalInfra)
 	supportUseCase := usecase.NewSupport(supportPersistence, userPersistence)
 	articleUseCase := usecase.NewArticle(articlePersistence)
 
@@ -91,7 +91,9 @@ func Execute() {
 		r.Patch("reset-password", userHandler.ResetPassword)
 	})
 
-	r.Group("", []gin.HandlerFunc{middleware.Authentication(config.DefaultRealm)}, func(r *router.Router) {
+	r.Group("", []gin.HandlerFunc{middleware.Authentication(config.DefaultRealm, config.UserSession)}, func(r *router.Router) {
+		r.Get("timeline", userHandler.Timeline)
+
 		r.Group("signed-url", nil, func(r *router.Router) {
 			r.Get("profile", signedURLHandler.Profile)
 			r.Get("article", signedURLHandler.Article)
