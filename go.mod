@@ -38,27 +38,28 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
 	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678 // indirect
-	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/api v0.58.0
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/driver/mysql v1.1.2
-	gorm.io/gorm v1.22.1
+	gorm.io/driver/mysql v1.1.3
+	gorm.io/gorm v1.22.2
 )
 
 require (
+	github.com/gin-contrib/sessions v0.0.4
 	github.com/nimil-jp/gin-utils v0.0.5
+	gorm.io/datatypes v1.0.3
 	jaytaylor.com/html2text v0.0.0-20211013233858-90c08c5027d3
 )
 
 require (
 	cloud.google.com/go v0.97.0 // indirect
-	github.com/gin-contrib/sessions v0.0.4 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.1.1 // indirect

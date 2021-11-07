@@ -28,7 +28,14 @@ func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
 	db := ctx.DB()
 
 	var user entity.User
-	err := db.First(&user, id).Error
+	err := db.
+		Preload("Followings", limit(6)).
+		Preload("Followers", limit(6)).
+		Preload("SupportsTo", limit(6)).
+		Preload("SupportsTo.ToUser").
+		Preload("SupportsFrom", limit(6)).
+		Preload("SupportsFrom.User").
+		First(&user, id).Error
 	if err != nil {
 		return nil, dbError(err)
 	}

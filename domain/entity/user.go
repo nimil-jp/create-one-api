@@ -19,6 +19,8 @@ type User struct {
 
 	RecoveryToken *vobj.RecoveryToken `json:"-"`
 
+	UnitPrice uint `json:"unit_price"`
+
 	CoverImage *string `json:"cover_image"`
 
 	AvatarImage  *string `json:"avatar_image"`
@@ -37,9 +39,13 @@ type User struct {
 	Qiita     *string `json:"qiita"`
 	Zenn      *string `json:"zenn"`
 
-	Articles   []*Article `json:"articles"`
-	Followings []*User    `json:"followings" gorm:"many2many:user_follows;joinForeignKey:user_id;joinReferences:following_id"`
-	Followers  []*User    `json:"followers" gorm:"many2many:user_follows;joinForeignKey:following_id;joinReferences:user_id"`
+	Articles []*Article `json:"articles"`
+
+	Followings []*User `json:"followings" gorm:"many2many:user_follows;joinForeignKey:user_id;joinReferences:following_id"`
+	Followers  []*User `json:"followers" gorm:"many2many:user_follows;joinForeignKey:following_id;joinReferences:user_id"`
+
+	SupportsTo   []*Support `json:"supports_to" gorm:"foreignKey:UserID"`
+	SupportsFrom []*Support `json:"supports_from" gorm:"foreignKey:ToID"`
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {

@@ -26,3 +26,9 @@ func exists(query *gorm.DB) (ok bool, err error) {
 	}
 	return count > 0, nil
 }
+
+func limit(limit int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Limit(limit)
+	}
+}

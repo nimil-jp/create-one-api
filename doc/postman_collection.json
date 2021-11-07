@@ -106,6 +106,25 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "ConnectPaypal",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/user/profile/connect-paypal",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"user",
+										"profile",
+										"connect-paypal"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -334,6 +353,37 @@
 			]
 		},
 		{
+			"name": "Support",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"to_id\": 2,\n    \"quantity\": 3,\n    \"paypal_data\": {}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/support",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"support"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Article",
 			"item": [
 				{
@@ -343,7 +393,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"example\",\n    \"content\": \"html string\",\n    \"draft\": false,\n    \"published_at\": \"2021-10-28T02:49:59+09:00\"\n}",
+							"raw": "{\n    \"title\": \"example\",\n    \"body\": \"html string\",\n    \"draft\": false,\n    \"published_at\": \"2021-10-28T02:49:59+09:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -387,7 +437,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"edited example\",\n    \"content\": \"html string\",\n    \"draft\": false,\n    \"published_at\": \"2021-10-28T02:49:59+09:00\"\n}",
+							"raw": "{\n    \"title\": \"edited example\",\n    \"body\": \"html string\",\n    \"draft\": false,\n    \"published_at\": \"2021-10-28T02:49:59+09:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -439,6 +489,29 @@
 					],
 					"path": [
 						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Time Line",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base}}/timeline?kind=following,supporting,other",
+					"host": [
+						"{{base}}"
+					],
+					"path": [
+						"timeline"
+					],
+					"query": [
+						{
+							"key": "kind",
+							"value": "following,supporting,other"
+						}
 					]
 				}
 			},

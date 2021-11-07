@@ -61,10 +61,12 @@ func Execute() {
 
 	// persistence
 	userPersistence := persistence.NewUser()
+	supportPersistence := persistence.NewSupport()
 	articlePersistence := persistence.NewArticle()
 
 	// ----- use case -----
 	userUseCase := usecase.NewUser(userPersistence, emailInfra, paypalInfra)
+	supportUseCase := usecase.NewSupport(supportPersistence, userPersistence)
 	articleUseCase := usecase.NewArticle(articlePersistence)
 
 	// ----- handler -----
@@ -72,6 +74,7 @@ func Execute() {
 	signedURLHandler := handler.NewSignedURL(gcs)
 
 	userHandler := handler.NewUser(userUseCase)
+	supportHandler := handler.NewSupport(supportUseCase)
 	articleHandler := handler.NewArticle(articleUseCase)
 
 	r := router.New(engine, rdb.Get)
@@ -104,6 +107,10 @@ func Execute() {
 				r.Put("", userHandler.EditProfile)
 				r.Get("connect-paypal", userHandler.ConnectPaypal)
 			})
+		})
+
+		r.Group("support", nil, func(r *router.Router) {
+			r.Post("", supportHandler.Create)
 		})
 
 		r.Group("article", nil, func(r *router.Router) {
