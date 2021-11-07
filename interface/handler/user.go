@@ -11,6 +11,7 @@ import (
 	"github.com/nimil-jp/gin-utils/util"
 
 	"go-gin-ddd/resource/request"
+	"go-gin-ddd/resource/response"
 	"go-gin-ddd/usecase"
 )
 
@@ -195,6 +196,28 @@ func (u User) Follow(follow bool) router.HandlerFunc {
 	}
 }
 
+func (u User) ConnectPaypal(ctx context.Context, c *gin.Context) error {
+	url, err := u.userUseCase.ConnectPaypal(ctx)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, url)
+	return nil
+}
+
+func (u User) Search(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	users, count, err := u.userUseCase.Search(ctx, paging, c.Query("keyword"))
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(users, count))
+	return nil
+}
+
 func (u User) Timeline(ctx context.Context, c *gin.Context) error {
 	paging := util.NewPaging(c)
 
@@ -215,15 +238,5 @@ func (u User) Timeline(ctx context.Context, c *gin.Context) error {
 	}
 
 	c.PureJSON(http.StatusOK, contents)
-	return nil
-}
-
-func (u User) ConnectPaypal(ctx context.Context, c *gin.Context) error {
-	url, err := u.userUseCase.ConnectPaypal(ctx)
-	if err != nil {
-		return err
-	}
-
-	c.JSON(http.StatusOK, url)
 	return nil
 }

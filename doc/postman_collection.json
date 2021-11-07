@@ -313,6 +313,37 @@
 					"response": []
 				},
 				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base}}/user?length=10&page=1&keyword",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"user"
+							],
+							"query": [
+								{
+									"key": "length",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "keyword",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Follow",
 					"request": {
 						"method": "PUT",

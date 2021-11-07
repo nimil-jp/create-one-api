@@ -41,6 +41,8 @@ type IUser interface {
 
 	ConnectPaypal(ctx context.Context) (string, error)
 
+	Search(ctx context.Context, paging *util.Paging, keyword string) ([]*entity.User, uint, error)
+
 	// Timeline のリターンがArticleになっているが、複数コンテンツに対応した場合にはinterface{}型になる
 	Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error)
 }
@@ -255,6 +257,10 @@ func (u user) ConnectPaypal(ctx context.Context) (string, error) {
 	}
 
 	return u.paypal.ConnectURL(user.Email)
+}
+
+func (u user) Search(ctx context.Context, paging *util.Paging, keyword string) ([]*entity.User, uint, error) {
+	return u.userRepo.Search(ctx, paging, keyword)
 }
 
 type TimelineKind string

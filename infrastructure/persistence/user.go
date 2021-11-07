@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"github.com/nimil-jp/gin-utils/context"
+	"github.com/nimil-jp/gin-utils/util"
 	"gorm.io/gorm"
 
 	"go-gin-ddd/domain"
@@ -106,4 +107,27 @@ func (u user) Follow(ctx context.Context, id uint, follow bool) error {
 	} else {
 		return db.Model(&from).Association("Followings").Delete(&to)
 	}
+}
+
+func (u user) Search(ctx context.Context, paging *util.Paging, keyword string) ([]*entity.User, uint, error) {
+	db := ctx.DB()
+
+	var dest []*entity.User
+	query := db.
+		Model(&entity.User{}).
+		Preload("Articles", limit(2)).
+		Where("user_name LIKE ?", "%"+keyword+"%").
+		Where("name LIKE ?", "%"+keyword+"%")
+
+	count, err := paging.GetCount(query)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = query.Scopes(paging.Query()).Find(&dest).Error
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	return dest, count, nil
 }

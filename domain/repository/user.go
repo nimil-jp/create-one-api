@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/nimil-jp/gin-utils/context"
+	"github.com/nimil-jp/gin-utils/util"
 
 	"go-gin-ddd/domain/entity"
 )
@@ -22,4 +23,6 @@ type IUser interface {
 	UserNameExists(ctx context.Context, userName string) (bool, error)
 
 	Follow(ctx context.Context, id uint, follow bool) error
+
+	Search(ctx context.Context, paging *util.Paging, keyword string) ([]*entity.User, uint, error)
 }
