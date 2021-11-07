@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: create-one-api
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.global-static-ip-name: ingress
+    nginx.ingress.kubernetes.io/proxy-body-size: 5G
+spec:
+  rules:
+    - host: api.one.nimil.dev
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: create-one-api
+                port:
+                  number: 8080
+
+  tls:
+    - hosts:
+        - api.one.nimil.dev
+      secretName: create-one-api-cert

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: create-one-api
+  labels:
+    app: create-one-api
+spec:
+  selector:
+    matchLabels:
+      app: create-one-api
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+  template:
+    metadata:
+      name: create-one-api
+      labels:
+        app: create-one-api
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: create-one-api
+          image: asia.gcr.io/nimil-base/create-one-api:${TAG}
+          imagePullPolicy: Always
+          env:
+            - name: DOTENV_PATH
+              value: /go/secret/.env
+          volumeMounts:
+            - mountPath: /go/secret
+              name: secret
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+      volumes:
+        - name: secret
+          secret:
+            secretName: create-one-secret
