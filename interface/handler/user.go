@@ -10,6 +10,7 @@ import (
 	"github.com/nimil-jp/gin-utils/http/router"
 	"github.com/nimil-jp/gin-utils/util"
 
+	"go-gin-ddd/config"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/resource/response"
 	"go-gin-ddd/usecase"
@@ -91,7 +92,7 @@ func (u User) Login(ctx context.Context, c *gin.Context) error {
 	}
 
 	if req.Session {
-		session := sessions.Default(c)
+		session := sessions.DefaultMany(c, config.UserSession)
 		session.Set("token", res.Token)
 		session.Set("refresh_token", res.RefreshToken)
 		if err = session.Save(); err != nil {
@@ -123,7 +124,7 @@ func (u User) RefreshToken(_ context.Context, c *gin.Context) error {
 	}
 
 	if req.Session {
-		session := sessions.Default(c)
+		session := sessions.DefaultMany(c, config.UserSession)
 		session.Set("token", res.Token)
 		session.Set("refresh_token", res.RefreshToken)
 		if err = session.Save(); err != nil {
