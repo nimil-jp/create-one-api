@@ -79,19 +79,25 @@ func Execute() {
 
 	r := router.New(engine, rdb.Get)
 
-	r.Group("webhook", nil, func(r *router.Router) {
-		r.Post("paypal", webhookHandler.Paypal)
+	r.Group("", []gin.HandlerFunc{middleware.UnAuth(config.DefaultRealm, config.UserSession)}, func(r *router.Router) {
+		r.Group("webhook", nil, func(r *router.Router) {
+			r.Post("paypal", webhookHandler.Paypal)
+		})
+
+		r.Group("user", nil, func(r *router.Router) {
+			r.Post("", userHandler.Create)
+			r.Post("login", userHandler.Login)
+			r.Post("refresh-token", userHandler.RefreshToken)
+			r.Patch("reset-password-request", userHandler.ResetPasswordRequest)
+			r.Patch("reset-password", userHandler.ResetPassword)
+
+			r.Group(":user_id/article", nil, func(r *router.Router) {
+				r.Get("", userHandler.Articles)
+			})
+		})
 	})
 
-	r.Group("user", nil, func(r *router.Router) {
-		r.Post("", userHandler.Create)
-		r.Post("login", userHandler.Login)
-		r.Post("refresh-token", userHandler.RefreshToken)
-		r.Patch("reset-password-request", userHandler.ResetPasswordRequest)
-		r.Patch("reset-password", userHandler.ResetPassword)
-	})
-
-	r.Group("", []gin.HandlerFunc{middleware.Authentication(config.DefaultRealm, config.UserSession)}, func(r *router.Router) {
+	r.Group("", []gin.HandlerFunc{middleware.Auth(config.DefaultRealm, config.UserSession)}, func(r *router.Router) {
 		r.Get("timeline", userHandler.Timeline)
 
 		r.Group("signed-url", nil, func(r *router.Router) {

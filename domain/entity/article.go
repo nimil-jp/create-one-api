@@ -13,11 +13,11 @@ import (
 
 type Article struct {
 	domain.SoftDeleteModel
-	UserID      uint      `json:"user_id"`
-	Title       string    `json:"title"`
-	Body        string    `json:"body"`
-	Draft       bool      `json:"draft" gorm:"index:list"`
-	PublishedAt time.Time `json:"published_at" gorm:"index:list"`
+	UserID      uint       `json:"user_id"`
+	Title       string     `json:"title"`
+	Body        string     `json:"body"`
+	Draft       bool       `json:"draft" gorm:"index:list"`
+	PublishedAt *time.Time `json:"published_at" gorm:"index:list"`
 
 	User *User `json:"user"`
 }

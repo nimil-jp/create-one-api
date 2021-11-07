@@ -10,6 +10,7 @@ import (
 type ArticleSearchOption struct {
 	UserIDs        []uint
 	ExcludeUserIDs []uint
+	Draft          bool
 }
 
 type IArticle interface {

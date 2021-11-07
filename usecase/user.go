@@ -45,6 +45,8 @@ type IUser interface {
 
 	// Timeline のリターンがArticleになっているが、複数コンテンツに対応した場合にはinterface{}型になる
 	Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error)
+
+	Articles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
 }
 
 type user struct {
@@ -289,6 +291,7 @@ func (v TimelineKind) Valid() error {
 func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error) {
 	articleOption := repository.ArticleSearchOption{
 		ExcludeUserIDs: []uint{ctx.UserID()},
+		Draft:          false,
 	}
 
 	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{Preload: true})
@@ -314,4 +317,11 @@ func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []Timelin
 	}
 
 	return articles, nil
+}
+
+func (u user) Articles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
+	return u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
+		UserIDs: []uint{id},
+		Draft:   ctx.UserID() == id,
+	})
 }

@@ -1,8 +1,11 @@
 package persistence
 
 import (
+	"time"
+
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/util"
+	"gorm.io/gorm"
 
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
@@ -52,21 +55,28 @@ func (u article) Search(ctx context.Context, paging *util.Paging, option reposit
 	var articles []*entity.Article
 	query := db.
 		Model(&entity.Article{}).
-		Preload("User")
+		Preload("User").
+		Scopes(func(db *gorm.DB) *gorm.DB {
+			if len(option.UserIDs) > 0 {
+				db.Where("user_id IN ?", option.UserIDs)
+			}
+			if len(option.ExcludeUserIDs) > 0 {
+				db.Where("user_id NOT IN ?", option.ExcludeUserIDs)
+			}
 
-	if len(option.UserIDs) > 0 {
-		query.Where("user_id IN ?", option.UserIDs)
-	}
-	if len(option.ExcludeUserIDs) > 0 {
-		query.Where("user_id NOT IN ?", option.ExcludeUserIDs)
-	}
+			if !option.Draft {
+				db.Where("draft = ?", true).
+					Where("published_at <= ?", time.Now())
+			}
+			return db
+		})
 
 	count, err := paging.GetCount(query)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	err = query.Find(&articles).Error
+	err = query.Order("published_at desc").Find(&articles).Error
 	if err != nil {
 		return nil, 0, err
 	}

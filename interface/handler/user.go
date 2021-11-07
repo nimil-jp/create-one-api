@@ -240,3 +240,20 @@ func (u User) Timeline(ctx context.Context, c *gin.Context) error {
 	c.PureJSON(http.StatusOK, contents)
 	return nil
 }
+
+func (u User) Articles(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	articles, count, err := u.userUseCase.Articles(ctx, paging, id)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(articles, count))
+	return nil
+}

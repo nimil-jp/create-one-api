@@ -129,6 +129,40 @@
 					]
 				},
 				{
+					"name": "Articles",
+					"item": [
+						{
+							"name": "Get",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/user/1/article?length=10&page=1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"user",
+										"1",
+										"article"
+									],
+									"query": [
+										{
+											"key": "length",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Create",
 					"request": {
 						"method": "POST",
@@ -318,7 +352,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base}}/user?length=10&page=1&keyword",
+							"raw": "{{base}}/user?length=10&page=1&keyword=",
 							"host": [
 								"{{base}}"
 							],
@@ -336,7 +370,7 @@
 								},
 								{
 									"key": "keyword",
-									"value": null
+									"value": ""
 								}
 							]
 						}
