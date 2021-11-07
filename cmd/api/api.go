@@ -19,6 +19,7 @@ import (
 	"go-gin-ddd/infrastructure/email"
 	"go-gin-ddd/infrastructure/gcp"
 	"go-gin-ddd/infrastructure/log"
+	"go-gin-ddd/infrastructure/paypal"
 	"go-gin-ddd/infrastructure/persistence"
 	"go-gin-ddd/interface/handler"
 	"go-gin-ddd/usecase"
@@ -54,24 +55,30 @@ func Execute() {
 
 	// dependencies injection
 	// ----- infrastructure -----
-	emailDriver := email.New()
+	emailInfra := email.New()
 	gcs := gcp.NewGcs()
+	paypalInfra := paypal.NewPaypal()
 
 	// persistence
 	userPersistence := persistence.NewUser()
 	articlePersistence := persistence.NewArticle()
 
 	// ----- use case -----
-	userUseCase := usecase.NewUser(emailDriver, userPersistence)
+	userUseCase := usecase.NewUser(userPersistence, emailInfra, paypalInfra)
 	articleUseCase := usecase.NewArticle(articlePersistence)
 
 	// ----- handler -----
+	webhookHandler := handler.NewWebhook(userPersistence)
 	signedURLHandler := handler.NewSignedURL(gcs)
 
 	userHandler := handler.NewUser(userUseCase)
 	articleHandler := handler.NewArticle(articleUseCase)
 
 	r := router.New(engine, rdb.Get)
+
+	r.Group("webhook", nil, func(r *router.Router) {
+		r.Post("paypal", webhookHandler.Paypal)
+	})
 
 	r.Group("user", nil, func(r *router.Router) {
 		r.Post("", userHandler.Create)
@@ -95,6 +102,7 @@ func Execute() {
 			r.Group("profile", nil, func(r *router.Router) {
 				r.Patch("cover-image", userHandler.SetCoverImage)
 				r.Put("", userHandler.EditProfile)
+				r.Get("connect-paypal", userHandler.ConnectPaypal)
 			})
 		})
 

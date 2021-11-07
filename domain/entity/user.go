@@ -14,6 +14,9 @@ type User struct {
 	Password vobj.Password `json:"-"`
 	UserName string        `json:"user_name" validate:"required" gorm:"unique;index"`
 
+	PaypalConnected  bool    `json:"paypal_connected"`
+	PaypalMerchantID *string `json:"paypal_merchant_id"`
+
 	RecoveryToken *vobj.RecoveryToken `json:"-"`
 
 	CoverImage *string `json:"cover_image"`
@@ -41,9 +44,10 @@ type User struct {
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
 	var user = User{
-		Email:         dto.Email,
-		UserName:      dto.UserName,
-		RecoveryToken: vobj.NewRecoveryToken(""),
+		Email:           dto.Email,
+		UserName:        dto.UserName,
+		PaypalConnected: false,
+		RecoveryToken:   vobj.NewRecoveryToken(""),
 	}
 
 	ctx.Validate(user)
@@ -77,4 +81,9 @@ func (u *User) ResetPassword(ctx context.Context, dto *request.UserResetPassword
 
 func (u *User) SetCoverImage(coverImage string) {
 	u.CoverImage = &coverImage
+}
+
+func (u *User) SetPaypal(merchantID string) {
+	u.PaypalConnected = true
+	u.PaypalMerchantID = &merchantID
 }

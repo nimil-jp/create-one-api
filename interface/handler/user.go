@@ -192,3 +192,13 @@ func (u User) Follow(follow bool) router.HandlerFunc {
 		return nil
 	}
 }
+
+func (u User) ConnectPaypal(ctx context.Context, c *gin.Context) error {
+	url, err := u.userUseCase.ConnectPaypal(ctx)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, url)
+	return nil
+}

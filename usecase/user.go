@@ -14,6 +14,7 @@ import (
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
 	emailInfra "go-gin-ddd/infrastructure/email"
+	"go-gin-ddd/infrastructure/paypal"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/resource/response"
 )
@@ -34,17 +35,21 @@ type IUser interface {
 	EditProfile(ctx context.Context, req *request.UserEditProfile) error
 
 	Follow(ctx context.Context, id uint, follow bool) error
+
+	ConnectPaypal(ctx context.Context) (string, error)
 }
 
 type user struct {
-	email    emailInfra.IEmail
 	userRepo repository.IUser
+	email    emailInfra.IEmail
+	paypal   paypal.IPaypal
 }
 
-func NewUser(email emailInfra.IEmail, tr repository.IUser) IUser {
+func NewUser(tr repository.IUser, email emailInfra.IEmail, pp paypal.IPaypal) IUser {
 	return &user{
-		email:    email,
 		userRepo: tr,
+		email:    email,
+		paypal:   pp,
 	}
 }
 
@@ -229,4 +234,17 @@ func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) err
 
 func (u user) Follow(ctx context.Context, id uint, follow bool) error {
 	return u.userRepo.Follow(ctx, id, follow)
+}
+
+func (u user) ConnectPaypal(ctx context.Context) (string, error) {
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID())
+	if err != nil {
+		return "", err
+	}
+
+	if user.PaypalConnected {
+		return "", xerrors.NewExpected(http.StatusConflict, "既に接続しています")
+	}
+
+	return u.paypal.ConnectURL(user.Email)
 }

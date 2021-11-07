@@ -37,6 +37,11 @@ type EnvType struct {
 		CredentialPath string `required:"true" split_words:"true"`
 		Bucket         string `required:"true"`
 	}
+	Paypal struct {
+		Sandbox  bool   `required:"true"`
+		ClientID string `required:"true" split_words:"true"`
+		Secret   string `required:"true"`
+	}
 }
 
 func fileExists(path string) bool {
