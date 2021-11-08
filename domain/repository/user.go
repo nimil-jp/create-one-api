@@ -8,8 +8,12 @@ import (
 )
 
 type UserGetByIDOption struct {
-	Preload bool
-	Limit   int
+	Limit int
+
+	PreloadFollowing  bool
+	PreloadFollowers  bool
+	PreloadSupporting bool
+	PreloadSupporters bool
 }
 
 type IUser interface {

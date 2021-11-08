@@ -101,11 +101,25 @@ func (u User) FollowingIDs() []uint {
 	}
 	return ids
 }
+func (u User) FollowerIDs() []uint {
+	var ids []uint
+	for _, follower := range u.Followers {
+		ids = append(ids, follower.ID)
+	}
+	return ids
+}
 
 func (u User) SupportingIDs() []uint {
 	var ids []uint
 	for _, support := range u.Supporting {
 		ids = append(ids, support.ToUser.ID)
+	}
+	return ids
+}
+func (u User) SupporterIDs() []uint {
+	var ids []uint
+	for _, support := range u.Supporting {
+		ids = append(ids, support.User.ID)
 	}
 	return ids
 }

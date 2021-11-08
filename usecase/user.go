@@ -52,6 +52,9 @@ type IUser interface {
 	Followers(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 	Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 	Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
+
+	FollowingArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
+	SupportersArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
 }
 
 type user struct {
@@ -210,7 +213,13 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 }
 
 func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
-	return u.userRepo.GetByID(ctx, id, &repository.UserGetByIDOption{Preload: true, Limit: 6})
+	return u.userRepo.GetByID(ctx, id, &repository.UserGetByIDOption{
+		Limit:             6,
+		PreloadFollowing:  true,
+		PreloadFollowers:  true,
+		PreloadSupporting: true,
+		PreloadSupporters: true,
+	})
 }
 
 func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {
@@ -299,7 +308,10 @@ func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []Timelin
 		Draft:          false,
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{Preload: true})
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{
+		PreloadFollowing:  true,
+		PreloadSupporting: true,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -342,4 +354,47 @@ func (u user) Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*
 }
 func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
 	return u.userRepo.Supporters(ctx, paging, id)
+}
+
+func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
+	if id != ctx.UserID() {
+		return nil, 0, xerrors.Forbidden()
+	}
+
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{PreloadFollowing: true})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	articles, count, err := u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
+		UserIDs:        user.FollowingIDs(),
+		ExcludeUserIDs: []uint{ctx.UserID()},
+		Draft:          false,
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return articles, count, nil
+}
+func (u user) SupportersArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
+	if id != ctx.UserID() {
+		return nil, 0, xerrors.Forbidden()
+	}
+
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{PreloadSupporters: true})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	articles, count, err := u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
+		UserIDs:        user.SupporterIDs(),
+		ExcludeUserIDs: []uint{ctx.UserID()},
+		Draft:          false,
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return articles, count, nil
 }

@@ -265,6 +265,36 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Articles",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/1/following/articles?length=10&page=1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"following",
+										"articles"
+									],
+									"query": [
+										{
+											"key": "length",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -314,6 +344,36 @@
 										"users",
 										"1",
 										"supporters"
+									],
+									"query": [
+										{
+											"key": "length",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Articles",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/1/supporters/articles?length=10&page=1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"supporters",
+										"articles"
 									],
 									"query": [
 										{
@@ -768,7 +828,7 @@
 	"variable": [
 		{
 			"key": "base",
-			"value": "http://localhost:8080"
+			"value": "https://api.one.nimil.dev"
 		},
 		{
 			"key": "email",

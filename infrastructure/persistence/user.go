@@ -33,12 +33,18 @@ func (u user) GetByID(ctx context.Context, id uint, option *repository.UserGetBy
 	err := db.
 		Scopes(func(db *gorm.DB) *gorm.DB {
 			if option != nil {
-				if option.Preload {
-					db.Preload("Following", limit(option.Limit)).
-						Preload("Followers", limit(option.Limit)).
-						Preload("Supporting", limit(option.Limit)).
-						Preload("Supporting.ToUser").
-						Preload("Supporters", limit(option.Limit)).
+				if option.PreloadFollowing {
+					db.Preload("Following", limit(option.Limit))
+				}
+				if option.PreloadFollowers {
+					db.Preload("Followers", limit(option.Limit))
+				}
+				if option.PreloadSupporting {
+					db.Preload("Supporting", limit(option.Limit)).
+						Preload("Supporting.ToUser")
+				}
+				if option.PreloadSupporters {
+					db.Preload("Supporters", limit(option.Limit)).
 						Preload("Supporters.User")
 				}
 			}

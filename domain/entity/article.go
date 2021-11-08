@@ -27,6 +27,7 @@ func NewArticle(ctx context.Context, dto *request.ArticleCreate) *Article {
 		UserID:      ctx.UserID(),
 		Title:       dto.Title,
 		Body:        dto.Body,
+		Draft:       dto.Draft,
 		PublishedAt: dto.PublishedAt,
 	}
 }

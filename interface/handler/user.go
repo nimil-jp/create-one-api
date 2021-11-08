@@ -335,3 +335,36 @@ func (u User) Supporters(ctx context.Context, c *gin.Context) error {
 	c.JSON(http.StatusOK, response.NewSearchResponse(users, count))
 	return nil
 }
+
+func (u User) FollowingArticles(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	articles, count, err := u.userUseCase.FollowingArticles(ctx, paging, id)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(articles, count))
+	return nil
+}
+func (u User) SupportersArticles(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	articles, count, err := u.userUseCase.SupportersArticles(ctx, paging, id)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(articles, count))
+	return nil
+}

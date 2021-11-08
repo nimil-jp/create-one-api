@@ -65,7 +65,7 @@ func (u article) Search(ctx context.Context, paging *util.Paging, option reposit
 			}
 
 			if !option.Draft {
-				db.Where("draft = ?", true).
+				db.Where("draft = ?", false).
 					Where("published_at <= ?", time.Now())
 			}
 			return db

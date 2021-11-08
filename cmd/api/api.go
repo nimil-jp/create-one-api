@@ -119,8 +119,22 @@ func Execute() {
 			r.Get("me", userHandler.GetMe)
 
 			r.Group(":user_id", nil, func(r *router.Router) {
-				r.Post("following/:target_user_id", userHandler.Follow(true))
-				r.Delete("following/:target_user_id", userHandler.Follow(false))
+				r.Group("following", nil, func(r *router.Router) {
+					r.Post(":target_user_id", userHandler.Follow(true))
+					r.Delete(":target_user_id", userHandler.Follow(false))
+				})
+
+				r.Group("following", nil, func(r *router.Router) {
+					r.Group("articles", nil, func(r *router.Router) {
+						r.Get("", userHandler.FollowingArticles)
+					})
+				})
+
+				r.Group("supporters", nil, func(r *router.Router) {
+					r.Group("articles", nil, func(r *router.Router) {
+						r.Get("", userHandler.SupportersArticles)
+					})
+				})
 
 				r.Group("articles", nil, func(r *router.Router) {
 					r.Get("", userHandler.Articles)
