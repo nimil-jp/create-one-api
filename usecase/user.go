@@ -47,6 +47,11 @@ type IUser interface {
 	Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error)
 
 	Articles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
+
+	Following(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
+	Followers(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
+	Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
+	Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 }
 
 type user struct {
@@ -300,15 +305,15 @@ func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []Timelin
 	}
 
 	if funk.Contains(kinds, TimelineFollowing) {
-		articleOption.UserIDs = append(articleOption.UserIDs, user.FollowingsID()...)
+		articleOption.UserIDs = append(articleOption.UserIDs, user.FollowingIDs()...)
 	} else {
-		articleOption.ExcludeUserIDs = append(articleOption.ExcludeUserIDs, user.FollowingsID()...)
+		articleOption.ExcludeUserIDs = append(articleOption.ExcludeUserIDs, user.FollowingIDs()...)
 	}
 
 	if funk.Contains(kinds, TimelineSupporting) {
-		articleOption.UserIDs = append(articleOption.UserIDs, user.SupportsToID()...)
+		articleOption.UserIDs = append(articleOption.UserIDs, user.SupportingIDs()...)
 	} else {
-		articleOption.ExcludeUserIDs = append(articleOption.ExcludeUserIDs, user.SupportsToID()...)
+		articleOption.ExcludeUserIDs = append(articleOption.ExcludeUserIDs, user.SupportingIDs()...)
 	}
 
 	articles, _, err := u.articleRepo.Search(ctx, paging, articleOption)
@@ -324,4 +329,17 @@ func (u user) Articles(ctx context.Context, paging *util.Paging, id uint) ([]*en
 		UserIDs: []uint{id},
 		Draft:   ctx.UserID() == id,
 	})
+}
+
+func (u user) Following(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
+	return u.userRepo.Following(ctx, paging, id)
+}
+func (u user) Followers(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
+	return u.userRepo.Followers(ctx, paging, id)
+}
+func (u user) Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
+	return u.userRepo.Supporting(ctx, paging, id)
+}
+func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
+	return u.userRepo.Supporters(ctx, paging, id)
 }

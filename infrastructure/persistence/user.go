@@ -34,12 +34,12 @@ func (u user) GetByID(ctx context.Context, id uint, option *repository.UserGetBy
 		Scopes(func(db *gorm.DB) *gorm.DB {
 			if option != nil {
 				if option.Preload {
-					db.Preload("Followings", limit(option.Limit)).
+					db.Preload("Following", limit(option.Limit)).
 						Preload("Followers", limit(option.Limit)).
-						Preload("SupportsTo", limit(option.Limit)).
-						Preload("SupportsTo.ToUser").
-						Preload("SupportsFrom", limit(option.Limit)).
-						Preload("SupportsFrom.User")
+						Preload("Supporting", limit(option.Limit)).
+						Preload("Supporting.ToUser").
+						Preload("Supporters", limit(option.Limit)).
+						Preload("Supporters.User")
 				}
 			}
 			return db
@@ -130,4 +130,89 @@ func (u user) Search(ctx context.Context, paging *util.Paging, keyword string) (
 	}
 
 	return dest, count, nil
+}
+
+func (u user) Following(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
+	db := ctx.DB()
+
+	var users []*entity.User
+	query := db.Unscoped().Table("user_follows").
+		Select("`users`.*").
+		Joins("JOIN users ON users.id = user_follows.following_id AND users.deleted_at IS NULL").
+		Where("user_follows.user_id = ?", id)
+
+	count, err := paging.GetCount(query)
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	err = query.Scopes(paging.Query()).Find(&users).Error
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	return users, count, nil
+}
+func (u user) Followers(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
+	db := ctx.DB()
+
+	var users []*entity.User
+	query := db.Unscoped().Table("user_follows").
+		Select("`users`.*").
+		Joins("JOIN users ON users.id = user_follows.user_id AND users.deleted_at IS NULL").
+		Where("user_follows.following_id = ?", id)
+
+	count, err := paging.GetCount(query)
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	err = query.Scopes(paging.Query()).Find(&users).Error
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	return users, count, nil
+}
+func (u user) Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
+	db := ctx.DB()
+
+	var users []*entity.User
+	query := db.Table("supports").
+		Select("`users`.*").
+		Joins("JOIN users ON users.id = supports.to_id AND users.deleted_at IS NULL").
+		Where("supports.user_id = ?", id)
+
+	count, err := paging.GetCount(query)
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	err = query.Scopes(paging.Query()).Find(&users).Error
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	return users, count, nil
+}
+func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
+	db := ctx.DB()
+
+	var users []*entity.User
+	query := db.Table("supports").
+		Select("`users`.*").
+		Joins("JOIN users ON users.id = supports.user_id AND users.deleted_at IS NULL").
+		Where("supports.to_id = ?", id)
+
+	count, err := paging.GetCount(query)
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	err = query.Scopes(paging.Query()).Find(&users).Error
+	if err != nil {
+		return nil, 0, dbError(err)
+	}
+
+	return users, count, nil
 }

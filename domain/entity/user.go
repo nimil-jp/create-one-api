@@ -41,11 +41,11 @@ type User struct {
 
 	Articles []*Article `json:"articles"`
 
-	Followings []*User `json:"followings" gorm:"many2many:user_follows;joinForeignKey:user_id;joinReferences:following_id"`
-	Followers  []*User `json:"followers" gorm:"many2many:user_follows;joinForeignKey:following_id;joinReferences:user_id"`
+	Following []*User `json:"followings" gorm:"many2many:user_follows;joinForeignKey:user_id;joinReferences:following_id"`
+	Followers []*User `json:"followers" gorm:"many2many:user_follows;joinForeignKey:following_id;joinReferences:user_id"`
 
-	SupportsTo   []*Support `json:"supports_to" gorm:"foreignKey:UserID"`
-	SupportsFrom []*Support `json:"supports_from" gorm:"foreignKey:ToID"`
+	Supporting []*Support `json:"supporting" gorm:"foreignKey:UserID"`
+	Supporters []*Support `json:"supporters" gorm:"foreignKey:ToID"`
 }
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
@@ -94,17 +94,17 @@ func (u *User) SetPaypal(merchantID string) {
 	u.PaypalMerchantID = &merchantID
 }
 
-func (u User) FollowingsID() []uint {
+func (u User) FollowingIDs() []uint {
 	var ids []uint
-	for _, following := range u.Followings {
+	for _, following := range u.Following {
 		ids = append(ids, following.ID)
 	}
 	return ids
 }
 
-func (u User) SupportsToID() []uint {
+func (u User) SupportingIDs() []uint {
 	var ids []uint
-	for _, support := range u.SupportsTo {
+	for _, support := range u.Supporting {
 		ids = append(ids, support.ToUser.ID)
 	}
 	return ids

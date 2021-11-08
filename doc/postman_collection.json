@@ -67,12 +67,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{base}}/user/profile/cover-image",
+									"raw": "{{base}}/users/1/profile/cover-image",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
-										"user",
+										"users",
+										"1",
 										"profile",
 										"cover-image"
 									]
@@ -95,12 +96,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{base}}/user/profile",
+									"raw": "{{base}}/users/1/profile",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
-										"user",
+										"users",
+										"1",
 										"profile"
 									]
 								}
@@ -113,12 +115,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/user/profile/connect-paypal",
+									"raw": "{{base}}/users/1/profile/connect-paypal",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
-										"user",
+										"users",
+										"1",
 										"profile",
 										"connect-paypal"
 									]
@@ -137,14 +140,180 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/user/1/article?length=10&page=1",
+									"raw": "{{base}}/users/1/articles?length=10&page=1",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
-										"user",
+										"users",
 										"1",
-										"article"
+										"articles"
+									],
+									"query": [
+										{
+											"key": "length",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Following",
+					"item": [
+						{
+							"name": "Follow",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/1/following/2",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"following",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Unfollow",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/1/following/2",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"following",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Following",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/1/following?length=10&page=1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"following"
+									],
+									"query": [
+										{
+											"key": "length",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Followers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/1/followers?length=10&page=1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"followers"
+									],
+									"query": [
+										{
+											"key": "length",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Supporting",
+					"item": [
+						{
+							"name": "Supporting",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/1/supporting?length=10&page=1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"supporting"
+									],
+									"query": [
+										{
+											"key": "length",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Supporters",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/1/supporters?length=10&page=1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"1",
+										"supporters"
 									],
 									"query": [
 										{
@@ -177,12 +346,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/user",
+							"raw": "{{base}}/users",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"user"
+								"users"
 							]
 						}
 					},
@@ -219,12 +388,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/user/login",
+							"raw": "{{base}}/users/login",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"login"
 							]
 						}
@@ -262,12 +431,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/user/refresh-token",
+							"raw": "{{base}}/users/refresh-token",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"refresh-token"
 							]
 						}
@@ -289,12 +458,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/user/reset-password-request",
+							"raw": "{{base}}/users/reset-password-request",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"reset-password-request"
 							]
 						}
@@ -316,12 +485,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/user/reset-password",
+							"raw": "{{base}}/users/reset-password",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"reset-password"
 							]
 						}
@@ -334,12 +503,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base}}/user/me",
+							"raw": "{{base}}/users/me",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"me"
 							]
 						}
@@ -352,12 +521,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base}}/user?length=10&page=1&keyword=",
+							"raw": "{{base}}/users?length=10&page=1&keyword=",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"user"
+								"users"
 							],
 							"query": [
 								{
@@ -372,44 +541,6 @@
 									"key": "keyword",
 									"value": ""
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Follow",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{base}}/user/follow/2",
-							"host": [
-								"{{base}}"
-							],
-							"path": [
-								"user",
-								"follow",
-								"2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Unfollow",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{base}}/user/unfollow/2",
-							"host": [
-								"{{base}}"
-							],
-							"path": [
-								"user",
-								"unfollow",
-								"2"
 							]
 						}
 					},
@@ -435,12 +566,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/support",
+							"raw": "{{base}}/supports",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"support"
+								"supports"
 							]
 						}
 					},
@@ -466,12 +597,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/article",
+							"raw": "{{base}}/articles",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"article"
+								"articles"
 							]
 						}
 					},
@@ -483,12 +614,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base}}/article/1",
+							"raw": "{{base}}/articles/1",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"article",
+								"articles",
 								"1"
 							]
 						}
@@ -510,12 +641,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/article/1",
+							"raw": "{{base}}/articles/1",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"article",
+								"articles",
 								"1"
 							]
 						}
@@ -528,12 +659,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base}}/article/1",
+							"raw": "{{base}}/articles/1",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"article",
+								"articles",
 								"1"
 							]
 						}

@@ -94,8 +94,11 @@ func Execute() {
 			r.Get("", userHandler.Search)
 
 			r.Group(":user_id", nil, func(r *router.Router) {
-				// r.Get("following", userHandler.Following)
-				// r.Get("followers", userHandler.Followers)
+				r.Get("following", userHandler.Following)
+				r.Get("followers", userHandler.Followers)
+
+				r.Get("supporting", userHandler.Supporting)
+				r.Get("supporters", userHandler.Supporters)
 			})
 		})
 

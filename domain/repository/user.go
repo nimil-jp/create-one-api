@@ -25,4 +25,9 @@ type IUser interface {
 	Follow(ctx context.Context, id uint, follow bool) error
 
 	Search(ctx context.Context, paging *util.Paging, keyword string) ([]*entity.User, uint, error)
+
+	Following(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
+	Followers(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
+	Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
+	Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 }

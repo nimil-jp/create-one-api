@@ -268,3 +268,70 @@ func (u User) Articles(ctx context.Context, c *gin.Context) error {
 	c.JSON(http.StatusOK, response.NewSearchResponse(articles, count))
 	return nil
 }
+
+func (u User) Following(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	users, count, err := u.userUseCase.Following(ctx, paging, id)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(users, count))
+	return nil
+}
+
+func (u User) Followers(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	users, count, err := u.userUseCase.Followers(ctx, paging, id)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(users, count))
+	return nil
+}
+func (u User) Supporting(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	users, count, err := u.userUseCase.Supporting(ctx, paging, id)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(users, count))
+	return nil
+}
+
+func (u User) Supporters(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	users, count, err := u.userUseCase.Supporters(ctx, paging, id)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(users, count))
+	return nil
+}
