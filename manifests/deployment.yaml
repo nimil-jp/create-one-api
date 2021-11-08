@@ -27,6 +27,8 @@ spec:
           env:
             - name: DOTENV_PATH
               value: /go/secret/.env
+            - name: GIN_MODE
+              value: test
           volumeMounts:
             - mountPath: /go/secret
               name: secret

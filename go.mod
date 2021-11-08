@@ -10,7 +10,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/ken109/gin-jwt v1.1.4
-	github.com/nimil-jp/gin-utils v0.0.10
+	github.com/nimil-jp/gin-utils v0.0.11
 	github.com/noknow-hub/go_crypto v0.0.0-20190921184517-be89dab92b85
 	github.com/pkg/errors v0.9.1
 	github.com/thoas/go-funk v0.9.1
