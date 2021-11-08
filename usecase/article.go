@@ -1,7 +1,10 @@
 package usecase
 
 import (
+	"time"
+
 	"github.com/nimil-jp/gin-utils/context"
+	"github.com/nimil-jp/gin-utils/xerrors"
 
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
@@ -30,7 +33,15 @@ func (a article) Create(ctx context.Context, req *request.ArticleCreate) (uint, 
 }
 
 func (a article) GetByID(ctx context.Context, id uint) (*entity.Article, error) {
-	return a.articleRepo.GetByID(ctx, id)
+	article, err := a.articleRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if !ctx.Authenticated() && article.UserID != ctx.UserID() &&
+		(!article.Draft || article.PublishedAt.After(time.Now())) {
+		return nil, xerrors.NotFound()
+	}
+	return article, nil
 }
 
 func (a article) Update(ctx context.Context, id uint, req *request.ArticleUpdate) error {

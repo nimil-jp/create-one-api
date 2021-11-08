@@ -91,9 +91,15 @@ func Execute() {
 			r.Patch("reset-password-request", userHandler.ResetPasswordRequest)
 			r.Patch("reset-password", userHandler.ResetPassword)
 
+			r.Get("", userHandler.Search)
+
 			r.Group(":user_id/article", nil, func(r *router.Router) {
 				r.Get("", userHandler.Articles)
 			})
+		})
+
+		r.Group("article", nil, func(r *router.Router) {
+			r.Get(":id", articleHandler.GetByID)
 		})
 	})
 
@@ -107,8 +113,6 @@ func Execute() {
 
 		r.Group("user", nil, func(r *router.Router) {
 			r.Get("me", userHandler.GetMe)
-
-			r.Get("", userHandler.Search)
 
 			r.Put("follow/:id", userHandler.Follow(true))
 			r.Put("unfollow/:id", userHandler.Follow(false))
@@ -126,7 +130,6 @@ func Execute() {
 
 		r.Group("article", nil, func(r *router.Router) {
 			r.Post("", articleHandler.Create)
-			r.Get(":id", articleHandler.GetByID)
 			r.Put(":id", articleHandler.Update)
 			r.Delete(":id", articleHandler.Delete)
 		})
