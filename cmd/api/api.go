@@ -84,7 +84,7 @@ func Execute() {
 			r.Post("paypal", webhookHandler.Paypal)
 		})
 
-		r.Group("user", nil, func(r *router.Router) {
+		r.Group("users", nil, func(r *router.Router) {
 			r.Post("", userHandler.Create)
 			r.Post("login", userHandler.Login)
 			r.Post("refresh-token", userHandler.RefreshToken)
@@ -93,12 +93,13 @@ func Execute() {
 
 			r.Get("", userHandler.Search)
 
-			r.Group(":user_id/article", nil, func(r *router.Router) {
-				r.Get("", userHandler.Articles)
+			r.Group(":user_id", nil, func(r *router.Router) {
+				// r.Get("following", userHandler.Following)
+				// r.Get("followers", userHandler.Followers)
 			})
 		})
 
-		r.Group("article", nil, func(r *router.Router) {
+		r.Group("articles", nil, func(r *router.Router) {
 			r.Get(":id", articleHandler.GetByID)
 		})
 	})
@@ -111,24 +112,30 @@ func Execute() {
 			r.Get("article", signedURLHandler.Article)
 		})
 
-		r.Group("user", nil, func(r *router.Router) {
+		r.Group("users", nil, func(r *router.Router) {
 			r.Get("me", userHandler.GetMe)
 
-			r.Put("follow/:id", userHandler.Follow(true))
-			r.Put("unfollow/:id", userHandler.Follow(false))
+			r.Group(":user_id", nil, func(r *router.Router) {
+				r.Post("following/:target_user_id", userHandler.Follow(true))
+				r.Delete("following/:target_user_id", userHandler.Follow(false))
 
-			r.Group("profile", nil, func(r *router.Router) {
-				r.Patch("cover-image", userHandler.SetCoverImage)
-				r.Put("", userHandler.EditProfile)
-				r.Get("connect-paypal", userHandler.ConnectPaypal)
+				r.Group("articles", nil, func(r *router.Router) {
+					r.Get("", userHandler.Articles)
+				})
+
+				r.Group("profile", nil, func(r *router.Router) {
+					r.Patch("cover-image", userHandler.SetCoverImage)
+					r.Put("", userHandler.EditProfile)
+					r.Get("connect-paypal", userHandler.ConnectPaypal)
+				})
 			})
 		})
 
-		r.Group("support", nil, func(r *router.Router) {
+		r.Group("supports", nil, func(r *router.Router) {
 			r.Post("", supportHandler.Create)
 		})
 
-		r.Group("article", nil, func(r *router.Router) {
+		r.Group("articles", nil, func(r *router.Router) {
 			r.Post("", articleHandler.Create)
 			r.Put(":id", articleHandler.Update)
 			r.Delete(":id", articleHandler.Delete)

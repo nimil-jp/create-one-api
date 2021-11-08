@@ -9,6 +9,7 @@ import (
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/http/router"
 	"github.com/nimil-jp/gin-utils/util"
+	"github.com/nimil-jp/gin-utils/xerrors"
 
 	"go-gin-ddd/config"
 	"go-gin-ddd/resource/request"
@@ -182,12 +183,21 @@ func (u User) EditProfile(ctx context.Context, c *gin.Context) error {
 
 func (u User) Follow(follow bool) router.HandlerFunc {
 	return func(ctx context.Context, c *gin.Context) error {
-		id, err := uintParam(c, "id")
+		userID, err := uintParam(c, "user_id")
 		if err != nil {
 			return err
 		}
 
-		err = u.userUseCase.Follow(ctx, id, follow)
+		if userID != ctx.UserID() {
+			return xerrors.Forbidden()
+		}
+
+		targetUserID, err := uintParam(c, "target_user_id")
+		if err != nil {
+			return err
+		}
+
+		err = u.userUseCase.Follow(ctx, targetUserID, follow)
 		if err != nil {
 			return err
 		}
