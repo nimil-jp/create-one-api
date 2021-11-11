@@ -37,7 +37,5 @@ jobs:
           sudo install kubectl /usr/local/bin/
 
       - name: Deploy
-        env:
-          TAG: ${{ github.SHA }}
         run: |
-          envsubst < manifests/deployment.yaml | kubectl apply -f -
+          kubectl set image deployment/create-one-api create-one-api=$IMAGE
