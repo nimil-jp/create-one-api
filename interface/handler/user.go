@@ -107,6 +107,19 @@ func (u User) Login(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
+func (u User) Logout(ctx context.Context, c *gin.Context) error {
+	if ctx.UserID() != 0 {
+		session := sessions.DefaultMany(c, config.UserSession)
+		session.Clear()
+		if err := session.Save(); err != nil {
+			return err
+		}
+	}
+
+	c.Status(http.StatusOK)
+	return nil
+}
+
 func (u User) RefreshToken(_ context.Context, c *gin.Context) error {
 	var req request.UserRefreshToken
 

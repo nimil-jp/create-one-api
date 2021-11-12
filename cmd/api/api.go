@@ -117,6 +117,7 @@ func Execute() {
 
 		r.Group("users", nil, func(r *router.Router) {
 			r.Get("me", userHandler.GetMe)
+			r.Post("logout", userHandler.Logout)
 
 			r.Group(":user_id", nil, func(r *router.Router) {
 				r.Group("following", nil, func(r *router.Router) {
