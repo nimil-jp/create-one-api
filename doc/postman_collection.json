@@ -50,6 +50,51 @@
 			"name": "User",
 			"item": [
 				{
+					"name": "By",
+					"item": [
+						{
+							"name": "ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/by/id/1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"by",
+										"id",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Username",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/by/username/ken109",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										"by",
+										"username",
+										"ken109"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Profile",
 					"item": [
 						{
@@ -398,7 +443,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"password_confirm\": \"{{password}}\",\n    \"user_name\": \"example_user\"\n}",
+							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"password_confirm\": \"{{password}}\",\n    \"username\": \"example_user\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

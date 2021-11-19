@@ -12,7 +12,7 @@ type User struct {
 	domain.SoftDeleteModel
 	Email    string        `json:"email" validate:"required,email"`
 	Password vobj.Password `json:"-"`
-	UserName string        `json:"user_name" validate:"required" gorm:"unique;index"`
+	Username string        `json:"username" validate:"required" gorm:"unique;index"`
 
 	PaypalConnected  bool    `json:"paypal_connected"`
 	PaypalMerchantID *string `json:"paypal_merchant_id"`
@@ -51,7 +51,7 @@ type User struct {
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
 	var user = User{
 		Email:           dto.Email,
-		UserName:        dto.UserName,
+		Username:        dto.Username,
 		PaypalConnected: false,
 		RecoveryToken:   vobj.NewRecoveryToken(""),
 	}

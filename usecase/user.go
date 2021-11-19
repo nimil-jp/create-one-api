@@ -34,6 +34,7 @@ type IUser interface {
 	RefreshToken(refreshToken string) (*response.UserLogin, error)
 
 	GetByID(ctx context.Context, id uint) (*entity.User, error)
+	GetByUsername(ctx context.Context, username string) (*entity.User, error)
 	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
 	EditProfile(ctx context.Context, req *request.UserEditProfile) error
 
@@ -82,12 +83,12 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error)
 		ctx.FieldError("Email", message.Duplicate)
 	}
 
-	userName, err := u.userRepo.UserNameExists(ctx, req.UserName)
+	userName, err := u.userRepo.UsernameExists(ctx, req.Username)
 	if err != nil {
 		return 0, err
 	}
 	if userName {
-		ctx.FieldError("UserName", message.Duplicate)
+		ctx.FieldError("Username", message.Duplicate)
 	}
 
 	newUser, err := entity.NewUser(ctx, req)
@@ -213,7 +214,17 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 }
 
 func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
-	return u.userRepo.GetByID(ctx, id, &repository.UserGetByIDOption{
+	return u.userRepo.GetByID(ctx, id, &repository.UserGetByOption{
+		Limit:             6,
+		PreloadFollowing:  true,
+		PreloadFollowers:  true,
+		PreloadSupporting: true,
+		PreloadSupporters: true,
+	})
+}
+
+func (u user) GetByUsername(ctx context.Context, username string) (*entity.User, error) {
+	return u.userRepo.GetByUsername(ctx, username, &repository.UserGetByOption{
 		Limit:             6,
 		PreloadFollowing:  true,
 		PreloadFollowers:  true,
@@ -308,7 +319,7 @@ func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []Timelin
 		Draft:          false,
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByOption{
 		PreloadFollowing:  true,
 		PreloadSupporting: true,
 	})
@@ -361,7 +372,7 @@ func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uin
 		return nil, 0, xerrors.Forbidden()
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{PreloadFollowing: true})
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByOption{PreloadFollowing: true})
 	if err != nil {
 		return nil, 0, err
 	}
@@ -382,7 +393,7 @@ func (u user) SupportersArticles(ctx context.Context, paging *util.Paging, id ui
 		return nil, 0, xerrors.Forbidden()
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByIDOption{PreloadSupporters: true})
+	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByOption{PreloadSupporters: true})
 	if err != nil {
 		return nil, 0, err
 	}

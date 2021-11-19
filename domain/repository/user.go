@@ -7,7 +7,7 @@ import (
 	"go-gin-ddd/domain/entity"
 )
 
-type UserGetByIDOption struct {
+type UserGetByOption struct {
 	Limit int
 
 	PreloadFollowing  bool
@@ -18,13 +18,14 @@ type UserGetByIDOption struct {
 
 type IUser interface {
 	Create(ctx context.Context, user *entity.User) (uint, error)
-	GetByID(ctx context.Context, id uint, option *UserGetByIDOption) (*entity.User, error)
+	GetByID(ctx context.Context, id uint, option *UserGetByOption) (*entity.User, error)
+	GetByUsername(ctx context.Context, username string, option *UserGetByOption) (*entity.User, error)
 	GetByEmail(ctx context.Context, email string) (*entity.User, error)
 	GetByRecoveryToken(ctx context.Context, recoveryToken string) (*entity.User, error)
 	Update(ctx context.Context, user *entity.User) error
 
 	EmailExists(ctx context.Context, email string) (bool, error)
-	UserNameExists(ctx context.Context, userName string) (bool, error)
+	UsernameExists(ctx context.Context, userName string) (bool, error)
 
 	Follow(ctx context.Context, id uint, follow bool) error
 

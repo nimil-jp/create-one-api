@@ -26,31 +26,49 @@ func (u user) Create(ctx context.Context, user *entity.User) (uint, error) {
 	return user.ID, nil
 }
 
-func (u user) GetByID(ctx context.Context, id uint, option *repository.UserGetByIDOption) (*entity.User, error) {
+func getByOptionScope(option *repository.UserGetByOption) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if option != nil {
+			if option.PreloadFollowing {
+				db.Preload("Following", limit(option.Limit))
+			}
+			if option.PreloadFollowers {
+				db.Preload("Followers", limit(option.Limit))
+			}
+			if option.PreloadSupporting {
+				db.Preload("Supporting", limit(option.Limit)).
+					Preload("Supporting.ToUser")
+			}
+			if option.PreloadSupporters {
+				db.Preload("Supporters", limit(option.Limit)).
+					Preload("Supporters.User")
+			}
+		}
+		return db
+	}
+}
+
+func (u user) GetByID(ctx context.Context, id uint, option *repository.UserGetByOption) (*entity.User, error) {
 	db := ctx.DB()
 
 	var user entity.User
 	err := db.
-		Scopes(func(db *gorm.DB) *gorm.DB {
-			if option != nil {
-				if option.PreloadFollowing {
-					db.Preload("Following", limit(option.Limit))
-				}
-				if option.PreloadFollowers {
-					db.Preload("Followers", limit(option.Limit))
-				}
-				if option.PreloadSupporting {
-					db.Preload("Supporting", limit(option.Limit)).
-						Preload("Supporting.ToUser")
-				}
-				if option.PreloadSupporters {
-					db.Preload("Supporters", limit(option.Limit)).
-						Preload("Supporters.User")
-				}
-			}
-			return db
-		}).
+		Scopes(getByOptionScope(option)).
 		First(&user, id).Error
+	if err != nil {
+		return nil, dbError(err)
+	}
+	return &user, nil
+}
+
+func (u user) GetByUsername(ctx context.Context, username string, option *repository.UserGetByOption) (*entity.User, error) {
+	db := ctx.DB()
+
+	var user entity.User
+	err := db.
+		Scopes(getByOptionScope(option)).
+		Where(&entity.User{Username: username}).
+		First(&user).Error
 	if err != nil {
 		return nil, dbError(err)
 	}
@@ -91,10 +109,10 @@ func (u user) EmailExists(ctx context.Context, email string) (bool, error) {
 	return exists(db.Model(&entity.User{}).Where(&entity.User{Email: email}))
 }
 
-func (u user) UserNameExists(ctx context.Context, userName string) (bool, error) {
+func (u user) UsernameExists(ctx context.Context, userName string) (bool, error) {
 	db := ctx.DB()
 
-	return exists(db.Model(&entity.User{}).Where(&entity.User{UserName: userName}))
+	return exists(db.Model(&entity.User{}).Where(&entity.User{Username: userName}))
 }
 
 func (u user) Follow(ctx context.Context, id uint, follow bool) error {
@@ -122,7 +140,7 @@ func (u user) Search(ctx context.Context, paging *util.Paging, keyword string) (
 	query := db.
 		Model(&entity.User{}).
 		Preload("Articles", limit(2)).
-		Where("user_name LIKE ?", "%"+keyword+"%").
+		Where("username LIKE ?", "%"+keyword+"%").
 		Where("name LIKE ?", "%"+keyword+"%")
 
 	count, err := paging.GetCount(query)

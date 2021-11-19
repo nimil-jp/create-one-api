@@ -12,6 +12,7 @@ import (
 	"github.com/nimil-jp/gin-utils/xerrors"
 
 	"go-gin-ddd/config"
+	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/resource/response"
 	"go-gin-ddd/usecase"
@@ -240,6 +241,32 @@ func (u User) Search(ctx context.Context, c *gin.Context) error {
 
 	c.JSON(http.StatusOK, response.NewSearchResponse(users, count))
 	return nil
+}
+
+func (u User) GetBy(by string) router.HandlerFunc {
+	return func(ctx context.Context, c *gin.Context) error {
+		var user *entity.User
+		var err error
+		switch by {
+		case "id":
+			userID, err := uintParam(c, "user_id")
+			if err != nil {
+				return err
+			}
+
+			user, err = u.userUseCase.GetByID(ctx, userID)
+			if err != nil {
+				return err
+			}
+		case "username":
+			user, err = u.userUseCase.GetByUsername(ctx, c.Param("username"))
+			if err != nil {
+				return err
+			}
+		}
+		c.JSON(http.StatusOK, user)
+		return nil
+	}
 }
 
 func (u User) Timeline(ctx context.Context, c *gin.Context) error {
