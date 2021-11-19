@@ -4,7 +4,7 @@ import (
 	"bytes"
 	templateHtml "html/template"
 
-	"github.com/pkg/errors"
+	"github.com/nimil-jp/gin-utils/errors"
 	"jaytaylor.com/html2text"
 )
 
@@ -20,7 +20,7 @@ func setHTMLTemplate(template *templateHtml.Template, data interface{}) (string,
 	var out bytes.Buffer
 	err := template.Execute(&out, data)
 	if err != nil {
-		return "", errors.WithStack(err)
+		return "", errors.NewUnexpected(err)
 	}
 	return out.String(), nil
 }
@@ -29,7 +29,7 @@ func setHTMLTemplate(template *templateHtml.Template, data interface{}) (string,
 // 	var out bytes.Buffer
 // 	err := template.Execute(&out, data)
 // 	if err != nil {
-// 		return "", errors.WithStack(err)
+// 		return "", errors.NewUnexpected(err)
 // 	}
 // 	return out.String(), nil
 // }

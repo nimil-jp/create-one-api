@@ -5,8 +5,8 @@ import (
 	"database/sql/driver"
 	"time"
 
+	"github.com/nimil-jp/gin-utils/errors"
 	crypto "github.com/noknow-hub/go_crypto"
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
@@ -29,7 +29,7 @@ func (p *RecoveryToken) Generate() (time.Duration, time.Time, error) {
 	)
 	*p = RecoveryToken(token)
 
-	return duration, expire, errors.WithStack(err)
+	return duration, expire, errors.NewUnexpected(err)
 }
 
 func (p RecoveryToken) IsValid() bool {
@@ -53,7 +53,7 @@ func (p *RecoveryToken) Scan(value interface{}) error {
 	err := nullString.Scan(value)
 	*p = RecoveryToken(nullString.String)
 
-	return errors.WithStack(err)
+	return errors.NewUnexpected(err)
 }
 
 func (p RecoveryToken) Value() (driver.Value, error) {

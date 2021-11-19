@@ -6,11 +6,10 @@ import (
 
 	jwt "github.com/ken109/gin-jwt"
 	"github.com/nimil-jp/gin-utils/util"
-	"github.com/pkg/errors"
 	"github.com/thoas/go-funk"
 
 	"github.com/nimil-jp/gin-utils/context"
-	"github.com/nimil-jp/gin-utils/xerrors"
+	"github.com/nimil-jp/gin-utils/errors"
 
 	"go-gin-ddd/config"
 	"go-gin-ddd/config/message"
@@ -115,7 +114,7 @@ func (u user) ResetPasswordRequest(
 	user, err := u.userRepo.GetByEmail(ctx, req.Email)
 	if err != nil {
 		switch v := err.(type) {
-		case *xerrors.Expected:
+		case *errors.Expected:
 			if !v.ChangeStatus(http.StatusNotFound, http.StatusOK) {
 				return nil, err
 			}
@@ -188,7 +187,7 @@ func (u user) Login(ctx context.Context, req *request.UserLogin) (*response.User
 			"user_id": user.ID,
 		})
 		if err != nil {
-			return nil, errors.WithStack(err)
+			return nil, errors.NewUnexpected(err)
 		}
 		return &res, nil
 	}
@@ -204,7 +203,7 @@ func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
 
 	ok, res.Token, res.RefreshToken, err = jwt.RefreshToken(config.DefaultRealm, refreshToken)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errors.NewUnexpected(err)
 	}
 
 	if !ok {
@@ -280,7 +279,7 @@ func (u user) ConnectPaypal(ctx context.Context) (string, error) {
 	}
 
 	if user.PaypalConnected {
-		return "", xerrors.NewExpected(http.StatusConflict, "既に接続しています")
+		return "", errors.NewExpected(http.StatusConflict, "既に接続しています")
 	}
 
 	return u.paypal.ConnectURL(user.Email)
@@ -309,7 +308,7 @@ func (v TimelineKind) Valid() error {
 	case TimelineFollowing, TimelineSupporting, TimelineOther:
 		return nil
 	default:
-		return errors.Wrapf(ErrInvalidTimelineKind, "get %s", v)
+		return fmt.Errorf("%w: got %s", ErrInvalidTimelineKind, v)
 	}
 }
 
@@ -369,7 +368,7 @@ func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*
 
 func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
 	if id != ctx.UserID() {
-		return nil, 0, xerrors.Forbidden()
+		return nil, 0, errors.Forbidden()
 	}
 
 	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByOption{PreloadFollowing: true})
@@ -390,7 +389,7 @@ func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uin
 }
 func (u user) SupportersArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
 	if id != ctx.UserID() {
-		return nil, 0, xerrors.Forbidden()
+		return nil, 0, errors.Forbidden()
 	}
 
 	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByOption{PreloadSupporters: true})

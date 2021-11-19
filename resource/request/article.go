@@ -12,5 +12,5 @@ type ArticleCreate struct {
 }
 
 type ArticleUpdate struct {
-	ArticleCreate
+	ArticleCreate `inline:"true"`
 }

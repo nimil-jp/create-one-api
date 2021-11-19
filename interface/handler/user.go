@@ -7,9 +7,9 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/nimil-jp/gin-utils/context"
+	"github.com/nimil-jp/gin-utils/errors"
 	"github.com/nimil-jp/gin-utils/http/router"
 	"github.com/nimil-jp/gin-utils/util"
-	"github.com/nimil-jp/gin-utils/xerrors"
 
 	"go-gin-ddd/config"
 	"go-gin-ddd/domain/entity"
@@ -203,7 +203,7 @@ func (u User) Follow(follow bool) router.HandlerFunc {
 		}
 
 		if userID != ctx.UserID() {
-			return xerrors.Forbidden()
+			return errors.Forbidden()
 		}
 
 		targetUserID, err := uintParam(c, "target_user_id")

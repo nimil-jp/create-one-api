@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/pkg/errors"
+	"github.com/nimil-jp/gin-utils/errors"
 
 	"go-gin-ddd/config"
 )
@@ -43,7 +43,7 @@ func (p *paypal) getAccessToken() error {
 	form.Add("grant_type", "client_credentials")
 	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/v1/oauth2/token", p.url), strings.NewReader(form.Encode()))
 	if err != nil {
-		return errors.WithStack(err)
+		return errors.NewUnexpected(err)
 	}
 
 	req.SetBasicAuth(p.clientID, p.secret)
@@ -51,26 +51,26 @@ func (p *paypal) getAccessToken() error {
 	client := new(http.Client)
 	res, err := client.Do(req)
 	if err != nil {
-		return errors.WithStack(err)
+		return errors.NewUnexpected(err)
 	}
 	defer func() {
 		_ = res.Body.Close()
 	}()
 
 	if res.StatusCode != 200 {
-		return errors.New("アクセストークンの取得に失敗しました")
+		return errors.NewExpected(http.StatusInternalServerError, "アクセストークンの取得に失敗しました")
 	}
 
 	var body map[string]interface{}
 	if err = json.NewDecoder(res.Body).Decode(&body); err != nil {
-		return errors.WithStack(err)
+		return errors.NewUnexpected(err)
 	}
 
 	if accessToken, ok := body["access_token"].(string); ok {
 		p.accessToken = accessToken
 		return nil
 	} else {
-		return errors.New("アクセストークンを取り出せませんでした")
+		return errors.NewExpected(http.StatusInternalServerError, "アクセストークンを取り出せませんでした")
 	}
 }
 
@@ -93,7 +93,7 @@ func (p paypal) request(option requestOption) error {
 
 	req, err := http.NewRequest(option.method, fmt.Sprintf("%s%s", p.url, option.path), option.body)
 	if err != nil {
-		return errors.WithStack(err)
+		return errors.NewUnexpected(err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -102,14 +102,14 @@ func (p paypal) request(option requestOption) error {
 	client := new(http.Client)
 	res, err := client.Do(req)
 	if err != nil {
-		return errors.WithStack(err)
+		return errors.NewUnexpected(err)
 	}
 	defer func() {
 		_ = res.Body.Close()
 	}()
 
 	if res.StatusCode != option.status {
-		return errors.New(option.errorMessage)
+		return errors.NewExpected(http.StatusInternalServerError, option.errorMessage)
 	}
 
 	jsonBytes, err := io.ReadAll(res.Body)
@@ -165,7 +165,7 @@ func (p *paypal) ConnectURL(email string) (string, error) {
 		succeeded: func(body []byte) error {
 			err := json.Unmarshal(body, &res)
 			if err != nil {
-				return errors.WithStack(err)
+				return errors.NewUnexpected(err)
 			}
 			return nil
 		},

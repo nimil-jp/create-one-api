@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/nimil-jp/gin-utils/context"
-	"github.com/nimil-jp/gin-utils/xerrors"
+	"github.com/nimil-jp/gin-utils/errors"
 
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
@@ -39,7 +39,7 @@ func (a article) GetByID(ctx context.Context, id uint) (*entity.Article, error) 
 	}
 	if !ctx.Authenticated() && article.UserID != ctx.UserID() &&
 		(!article.Draft || article.PublishedAt.After(time.Now())) {
-		return nil, xerrors.NotFound()
+		return nil, errors.NotFound()
 	}
 	return article, nil
 }

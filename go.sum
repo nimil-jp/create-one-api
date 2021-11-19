@@ -210,6 +210,8 @@ github.com/gorilla/sessions v1.2.0/go.mod h1:dk2InVEVJ0sfLlnXv9EAgkf6ecYs/i80K/z
 github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
 github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
+github.com/iancoleman/strcase v0.2.0 h1:05I4QRnGpI0m37iZQRuskXh+w77mr6Z41lwQzuHLwW0=
+github.com/iancoleman/strcase v0.2.0/go.mod h1:iwCmte+B7n89clKwxIoIXy/HfoL7AsD47ZCWhYzw7ho=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/jackc/chunkreader v1.0.0 h1:4s39bBR8ByfqH+DKm8rQA3E1LHZWB9XWcrz8fqaZbe0=
@@ -328,8 +330,8 @@ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJ
 github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9Gz0M=
 github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
-github.com/nimil-jp/gin-utils v0.0.11 h1:m3Jt/JX49pEZz5GazoJjrAC/eTAmfLjCm7hV55gXeXY=
-github.com/nimil-jp/gin-utils v0.0.11/go.mod h1:FPbcls6H1V+cgtv+kJDjK3PIpCMv8QbamsxamO62Skk=
+github.com/nimil-jp/gin-utils v0.0.12 h1:IXAdp2IavP2SfChf1L3BhAxLlvGTEgRsDUPCqnRMVfw=
+github.com/nimil-jp/gin-utils v0.0.12/go.mod h1:r91ATyMZwn0in6vxIkBrTPjR6riH1lM9avjCuJ79BGA=
 github.com/noknow-hub/go_crypto v0.0.0-20190921184517-be89dab92b85 h1:LkPzHu8gqhjoKckWq+HJs5Fguc43BY9jBqhYqQf0ePs=
 github.com/noknow-hub/go_crypto v0.0.0-20190921184517-be89dab92b85/go.mod h1:KZyTEMuHRJ00uI/EtItkeyxYoFM23OSM4mc1T07QQJw=
 github.com/olekukonko/tablewriter v0.0.5 h1:P2Ga83D34wi1o9J6Wh1mRuqd4mF/x/lgBS7N7AbDhec=

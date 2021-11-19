@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/nimil-jp/gin-utils/context"
-	"github.com/nimil-jp/gin-utils/xerrors"
+	"github.com/nimil-jp/gin-utils/errors"
 
 	"go-gin-ddd/domain"
 	"go-gin-ddd/resource/request"
@@ -41,7 +41,7 @@ func (e *Article) Update(dto *request.ArticleUpdate) {
 
 func (e Article) WrittenBy(userID uint) error {
 	if e.UserID != userID {
-		return xerrors.NewExpected(http.StatusForbidden, "あなたの記事ではありません。")
+		return errors.NewExpected(http.StatusForbidden, "あなたの記事ではありません。")
 	}
 	return nil
 }

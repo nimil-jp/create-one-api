@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 
-	"github.com/pkg/errors"
+	"github.com/nimil-jp/gin-utils/errors"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -24,7 +24,7 @@ func NewPassword(ctx context.Context, password, passwordConfirm string) (*Passwo
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), config.BcryptHashCost)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errors.NewUnexpected(err)
 	}
 
 	value := Password(hashedPassword)
@@ -42,7 +42,7 @@ func (p *Password) Scan(value interface{}) error {
 	err := nullString.Scan(value)
 	*p = Password(nullString.String)
 
-	return errors.WithStack(err)
+	return errors.NewUnexpected(err)
 }
 
 func (p Password) Value() (driver.Value, error) {
