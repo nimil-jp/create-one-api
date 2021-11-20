@@ -1,31 +1,9 @@
 package request
 
 type UserCreate struct {
-	Email           string `json:"email"`
-	Password        string `json:"password"`
-	PasswordConfirm string `json:"password_confirm"`
-	Username        string `json:"username"`
-}
-
-type UserLogin struct {
-	Session  bool   `json:"session"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type UserRefreshToken struct {
-	Session      bool   `json:"session"`
-	RefreshToken string `json:"refresh_token"`
-}
-
-type UserResetPasswordRequest struct {
-	Email string `json:"email"`
-}
-
-type UserResetPassword struct {
-	RecoveryToken   string `json:"recovery_token"`
-	Password        string `json:"password"`
-	PasswordConfirm string `json:"password_confirm"`
+	FirebaseUID string `json:"firebase_uid"`
+	Email       string `json:"email"`
+	Username    string `json:"username"`
 }
 
 // profile

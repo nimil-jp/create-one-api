@@ -24,7 +24,7 @@ type Article struct {
 
 func NewArticle(ctx context.Context, dto *request.ArticleCreate) *Article {
 	return &Article{
-		UserID:      ctx.UserID(),
+		UserID:      ctx.UID(),
 		Title:       dto.Title,
 		Body:        dto.Body,
 		Draft:       dto.Draft,

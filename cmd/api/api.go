@@ -50,13 +50,11 @@ func Execute() {
 	// cors
 	engine.Use(middleware.Cors(nil))
 
-	// cookie
-	engine.Use(middleware.Session([]string{config.UserSession}, config.Env.App.Secret, nil))
-
 	// dependencies injection
 	// ----- infrastructure -----
 	emailInfra := email.New()
 	gcs := gcp.NewGcs()
+	firebase := gcp.NewFirebase()
 	paypalInfra := paypal.NewPaypal()
 
 	// persistence
@@ -65,7 +63,7 @@ func Execute() {
 	articlePersistence := persistence.NewArticle()
 
 	// ----- use case -----
-	userUseCase := usecase.NewUser(userPersistence, articlePersistence, emailInfra, paypalInfra)
+	userUseCase := usecase.NewUser(userPersistence, articlePersistence, firebase, emailInfra, paypalInfra)
 	supportUseCase := usecase.NewSupport(supportPersistence, userPersistence)
 	articleUseCase := usecase.NewArticle(articlePersistence)
 
@@ -77,19 +75,16 @@ func Execute() {
 	supportHandler := handler.NewSupport(supportUseCase)
 	articleHandler := handler.NewArticle(articleUseCase)
 
-	r := router.New(engine, rdb.Get)
+	r := router.New(config.AppName, engine, rdb.Get)
 
-	r.Group("", []gin.HandlerFunc{middleware.UnAuth(config.DefaultRealm, config.UserSession)}, func(r *router.Router) {
+	middleware.FirebaseSetup(firebase.AuthClient())
+
+	r.Group("", []gin.HandlerFunc{middleware.FirebaseAuth(false)}, func(r *router.Router) {
 		r.Group("webhook", nil, func(r *router.Router) {
 			r.Post("paypal", webhookHandler.Paypal)
 		})
 
 		r.Group("users", nil, func(r *router.Router) {
-			r.Post("", userHandler.Create)
-			r.Post("login", userHandler.Login)
-			r.Post("refresh-token", userHandler.RefreshToken)
-			r.Patch("reset-password-request", userHandler.ResetPasswordRequest)
-			r.Patch("reset-password", userHandler.ResetPassword)
 
 			r.Get("", userHandler.Search)
 
@@ -112,7 +107,7 @@ func Execute() {
 		})
 	})
 
-	r.Group("", []gin.HandlerFunc{middleware.Auth(config.DefaultRealm, config.UserSession)}, func(r *router.Router) {
+	r.Group("", []gin.HandlerFunc{middleware.FirebaseAuth(true)}, func(r *router.Router) {
 		r.Get("timeline", userHandler.Timeline)
 
 		r.Group("signed-url", nil, func(r *router.Router) {
@@ -121,8 +116,9 @@ func Execute() {
 		})
 
 		r.Group("users", nil, func(r *router.Router) {
+			r.Post("", userHandler.Create)
+
 			r.Get("me", userHandler.GetMe)
-			r.Post("logout", userHandler.Logout)
 
 			r.Group(":user_id", nil, func(r *router.Router) {
 				r.Group("following", nil, func(r *router.Router) {

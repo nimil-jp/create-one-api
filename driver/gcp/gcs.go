@@ -10,19 +10,19 @@ import (
 )
 
 var (
-	client *storage.Client
+	gcsClient *storage.Client
 )
 
 func init() {
 	var err error
 
 	ctx := context.Background()
-	client, err = storage.NewClient(ctx, option.WithCredentialsFile(config.Env.GCP.CredentialPath))
+	gcsClient, err = storage.NewClient(ctx, option.WithCredentialsFile(config.Env.GCP.CredentialPath))
 	if err != nil {
 		panic(err)
 	}
 }
 
 func GcsClient() *storage.Client {
-	return client
+	return gcsClient
 }

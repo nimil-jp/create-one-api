@@ -21,7 +21,6 @@ type IUser interface {
 	GetByID(ctx context.Context, id uint, option *UserGetByOption) (*entity.User, error)
 	GetByUsername(ctx context.Context, username string, option *UserGetByOption) (*entity.User, error)
 	GetByEmail(ctx context.Context, email string) (*entity.User, error)
-	GetByRecoveryToken(ctx context.Context, recoveryToken string) (*entity.User, error)
 	Update(ctx context.Context, user *entity.User) error
 
 	EmailExists(ctx context.Context, email string) (bool, error)

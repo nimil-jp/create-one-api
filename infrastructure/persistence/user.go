@@ -8,7 +8,6 @@ import (
 	"go-gin-ddd/domain"
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
-	"go-gin-ddd/domain/vobj"
 )
 
 type user struct{}
@@ -86,17 +85,6 @@ func (u user) GetByEmail(ctx context.Context, email string) (*entity.User, error
 	return &dest, nil
 }
 
-func (u user) GetByRecoveryToken(ctx context.Context, recoveryToken string) (*entity.User, error) {
-	db := ctx.DB()
-
-	var dest entity.User
-	err := db.Where(&entity.User{RecoveryToken: vobj.NewRecoveryToken(recoveryToken)}).First(&dest).Error
-	if err != nil {
-		return nil, dbError(err)
-	}
-	return &dest, nil
-}
-
 func (u user) Update(ctx context.Context, user *entity.User) error {
 	db := ctx.DB()
 
@@ -119,7 +107,7 @@ func (u user) Follow(ctx context.Context, id uint, follow bool) error {
 	db := ctx.DB()
 
 	from := entity.User{
-		SoftDeleteModel: domain.SoftDeleteModel{ID: ctx.UserID()},
+		SoftDeleteModel: domain.SoftDeleteModel{ID: ctx.UID()},
 	}
 
 	to := entity.User{

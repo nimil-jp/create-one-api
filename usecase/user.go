@@ -4,33 +4,23 @@ import (
 	"fmt"
 	"net/http"
 
-	jwt "github.com/ken109/gin-jwt"
 	"github.com/nimil-jp/gin-utils/util"
 	"github.com/thoas/go-funk"
 
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/errors"
 
-	"go-gin-ddd/config"
 	"go-gin-ddd/config/message"
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
 	emailInfra "go-gin-ddd/infrastructure/email"
+	"go-gin-ddd/infrastructure/gcp"
 	"go-gin-ddd/infrastructure/paypal"
 	"go-gin-ddd/resource/request"
-	"go-gin-ddd/resource/response"
 )
 
 type IUser interface {
 	Create(ctx context.Context, req *request.UserCreate) (uint, error)
-
-	ResetPasswordRequest(
-		ctx context.Context,
-		req *request.UserResetPasswordRequest,
-	) (*response.UserResetPasswordRequest, error)
-	ResetPassword(ctx context.Context, req *request.UserResetPassword) error
-	Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error)
-	RefreshToken(refreshToken string) (*response.UserLogin, error)
 
 	GetByID(ctx context.Context, id uint) (*entity.User, error)
 	GetByUsername(ctx context.Context, username string) (*entity.User, error)
@@ -60,28 +50,22 @@ type IUser interface {
 type user struct {
 	userRepo    repository.IUser
 	articleRepo repository.IArticle
+	firebase    gcp.IFirebase
 	email       emailInfra.IEmail
 	paypal      paypal.IPaypal
 }
 
-func NewUser(ur repository.IUser, ar repository.IArticle, email emailInfra.IEmail, pp paypal.IPaypal) IUser {
+func NewUser(ur repository.IUser, ar repository.IArticle, firebase gcp.IFirebase, email emailInfra.IEmail, pp paypal.IPaypal) IUser {
 	return &user{
 		userRepo:    ur,
 		articleRepo: ar,
+		firebase:    firebase,
 		email:       email,
 		paypal:      pp,
 	}
 }
 
 func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error) {
-	email, err := u.userRepo.EmailExists(ctx, req.Email)
-	if err != nil {
-		return 0, err
-	}
-	if email {
-		ctx.FieldError("Email", message.Duplicate)
-	}
-
 	userName, err := u.userRepo.UsernameExists(ctx, req.Username)
 	if err != nil {
 		return 0, err
@@ -99,117 +83,20 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error)
 		return 0, ctx.ValidationError()
 	}
 
-	id, err := u.userRepo.Create(ctx, newUser)
+	var id uint
+	err = ctx.Transaction(func(ctx context.Context) error {
+		id, err = u.userRepo.Create(ctx, newUser)
+		if err != nil {
+			return err
+		}
+
+		return u.firebase.SetClaimsUID(ctx.FirebaseUID(), id)
+	})
 	if err != nil {
 		return 0, err
 	}
 
 	return id, nil
-}
-
-func (u user) ResetPasswordRequest(
-	ctx context.Context,
-	req *request.UserResetPasswordRequest,
-) (*response.UserResetPasswordRequest, error) {
-	user, err := u.userRepo.GetByEmail(ctx, req.Email)
-	if err != nil {
-		switch v := err.(type) {
-		case *errors.Expected:
-			if !v.ChangeStatus(http.StatusNotFound, http.StatusOK) {
-				return nil, err
-			}
-		default:
-			return nil, err
-		}
-	}
-
-	var res response.UserResetPasswordRequest
-
-	res.Duration, res.Expire, err = user.RecoveryToken.Generate()
-	if err != nil {
-		return nil, err
-	}
-
-	err = ctx.Transaction(
-		func(ctx context.Context) error {
-			err = u.userRepo.Update(ctx, user)
-			if err != nil {
-				return err
-			}
-
-			err = u.email.Send(user.Email, emailInfra.UserResetPasswordRequest{
-				URL:   config.Env.App.URL,
-				Token: user.RecoveryToken.String(),
-			})
-			if err != nil {
-				return err
-			}
-
-			return nil
-		},
-	)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-func (u user) ResetPassword(ctx context.Context, req *request.UserResetPassword) error {
-	user, err := u.userRepo.GetByRecoveryToken(ctx, req.RecoveryToken)
-	if err != nil {
-		return err
-	}
-
-	err = user.ResetPassword(ctx, req)
-	if err != nil {
-		return err
-	}
-
-	if ctx.IsInValid() {
-		return ctx.ValidationError()
-	}
-
-	return u.userRepo.Update(ctx, user)
-}
-
-func (u user) Login(ctx context.Context, req *request.UserLogin) (*response.UserLogin, error) {
-	user, err := u.userRepo.GetByEmail(ctx, req.Email)
-	if err != nil {
-		return nil, err
-	}
-
-	if user.Password.IsValid(req.Password) {
-		var res response.UserLogin
-
-		res.Token, res.RefreshToken, err = jwt.IssueToken(config.DefaultRealm, jwt.Claims{
-			"user_id": user.ID,
-		})
-		if err != nil {
-			return nil, errors.NewUnexpected(err)
-		}
-		return &res, nil
-	}
-	return nil, nil
-}
-
-func (u user) RefreshToken(refreshToken string) (*response.UserLogin, error) {
-	var (
-		res response.UserLogin
-		ok  bool
-		err error
-	)
-
-	ok, res.Token, res.RefreshToken, err = jwt.RefreshToken(config.DefaultRealm, refreshToken)
-	if err != nil {
-		return nil, errors.NewUnexpected(err)
-	}
-
-	if !ok {
-		return nil, nil
-	}
-	return &res, nil
 }
 
 func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
@@ -233,7 +120,7 @@ func (u user) GetByUsername(ctx context.Context, username string) (*entity.User,
 }
 
 func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), nil)
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), nil)
 	if err != nil {
 		return err
 	}
@@ -244,7 +131,7 @@ func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage)
 }
 
 func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) error {
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), nil)
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), nil)
 	if err != nil {
 		return err
 	}
@@ -273,7 +160,7 @@ func (u user) Follow(ctx context.Context, id uint, follow bool) error {
 }
 
 func (u user) ConnectPaypal(ctx context.Context) (string, error) {
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), nil)
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -314,11 +201,11 @@ func (v TimelineKind) Valid() error {
 
 func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error) {
 	articleOption := repository.ArticleSearchOption{
-		ExcludeUserIDs: []uint{ctx.UserID()},
+		ExcludeUserIDs: []uint{ctx.UID()},
 		Draft:          false,
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByOption{
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetByOption{
 		PreloadFollowing:  true,
 		PreloadSupporting: true,
 	})
@@ -349,7 +236,7 @@ func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []Timelin
 func (u user) Articles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
 	return u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
 		UserIDs: []uint{id},
-		Draft:   ctx.UserID() == id,
+		Draft:   ctx.UID() == id,
 	})
 }
 
@@ -367,18 +254,18 @@ func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*
 }
 
 func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
-	if id != ctx.UserID() {
+	if id != ctx.UID() {
 		return nil, 0, errors.Forbidden()
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByOption{PreloadFollowing: true})
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetByOption{PreloadFollowing: true})
 	if err != nil {
 		return nil, 0, err
 	}
 
 	articles, count, err := u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
 		UserIDs:        user.FollowingIDs(),
-		ExcludeUserIDs: []uint{ctx.UserID()},
+		ExcludeUserIDs: []uint{ctx.UID()},
 		Draft:          false,
 	})
 	if err != nil {
@@ -388,18 +275,18 @@ func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uin
 	return articles, count, nil
 }
 func (u user) SupportersArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
-	if id != ctx.UserID() {
+	if id != ctx.UID() {
 		return nil, 0, errors.Forbidden()
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UserID(), &repository.UserGetByOption{PreloadSupporters: true})
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetByOption{PreloadSupporters: true})
 	if err != nil {
 		return nil, 0, err
 	}
 
 	articles, count, err := u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
 		UserIDs:        user.SupporterIDs(),
-		ExcludeUserIDs: []uint{ctx.UserID()},
+		ExcludeUserIDs: []uint{ctx.UID()},
 		Draft:          false,
 	})
 	if err != nil {

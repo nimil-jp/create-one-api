@@ -37,7 +37,7 @@ func (a article) GetByID(ctx context.Context, id uint) (*entity.Article, error) 
 	if err != nil {
 		return nil, err
 	}
-	if !ctx.Authenticated() && article.UserID != ctx.UserID() &&
+	if !ctx.Authenticated() && article.UserID != ctx.UID() &&
 		(!article.Draft || article.PublishedAt.After(time.Now())) {
 		return nil, errors.NotFound()
 	}
@@ -50,7 +50,7 @@ func (a article) Update(ctx context.Context, id uint, req *request.ArticleUpdate
 		return err
 	}
 
-	if err := article.WrittenBy(ctx.UserID()); err != nil {
+	if err := article.WrittenBy(ctx.UID()); err != nil {
 		return err
 	}
 
@@ -65,7 +65,7 @@ func (a article) Delete(ctx context.Context, id uint) error {
 		return err
 	}
 
-	if err := article.WrittenBy(ctx.UserID()); err != nil {
+	if err := article.WrittenBy(ctx.UID()); err != nil {
 		return err
 	}
 

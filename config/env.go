@@ -7,6 +7,10 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+const (
+	AppName = "createone"
+)
+
 var Env EnvType
 
 type EnvType struct {

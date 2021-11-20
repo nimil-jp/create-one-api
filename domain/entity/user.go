@@ -4,20 +4,17 @@ import (
 	"github.com/nimil-jp/gin-utils/context"
 
 	"go-gin-ddd/domain"
-	"go-gin-ddd/domain/vobj"
 	"go-gin-ddd/resource/request"
 )
 
 type User struct {
 	domain.SoftDeleteModel
-	Email    string        `json:"email" validate:"required,email"`
-	Password vobj.Password `json:"-"`
-	Username string        `json:"username" validate:"required" gorm:"unique;index"`
+	FirebaseUID string `json:"-" gorm:"unique"`
+	Email       string `json:"email" validate:"required,email"`
+	Username    string `json:"username" validate:"required" gorm:"unique;index"`
 
 	PaypalConnected  bool    `json:"paypal_connected"`
 	PaypalMerchantID *string `json:"paypal_merchant_id"`
-
-	RecoveryToken *vobj.RecoveryToken `json:"-"`
 
 	UnitPrice uint `json:"unit_price"`
 
@@ -50,39 +47,15 @@ type User struct {
 
 func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
 	var user = User{
+		FirebaseUID:     dto.FirebaseUID,
 		Email:           dto.Email,
 		Username:        dto.Username,
 		PaypalConnected: false,
-		RecoveryToken:   vobj.NewRecoveryToken(""),
 	}
 
 	ctx.Validate(user)
 
-	password, err := vobj.NewPassword(ctx, dto.Password, dto.PasswordConfirm)
-	if err != nil {
-		return nil, err
-	}
-
-	user.Password = *password
-
 	return &user, nil
-}
-
-func (u *User) ResetPassword(ctx context.Context, dto *request.UserResetPassword) error {
-	if !u.RecoveryToken.IsValid() {
-		ctx.FieldError("RecoveryToken", "リカバリートークンが無効です")
-		return nil
-	}
-
-	password, err := vobj.NewPassword(ctx, dto.Password, dto.PasswordConfirm)
-	if err != nil {
-		return err
-	}
-
-	u.Password = *password
-
-	u.RecoveryToken.Clear()
-	return nil
 }
 
 func (u *User) SetCoverImage(coverImage string) {

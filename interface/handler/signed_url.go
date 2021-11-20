@@ -22,7 +22,7 @@ func NewSignedURL(gcs gcp.IGcs) *SignedURL {
 }
 
 func (h SignedURL) Profile(ctx context.Context, c *gin.Context) error {
-	res, err := h.gcs.GetSignedURL(fmt.Sprintf("profile/%d", ctx.UserID()), true)
+	res, err := h.gcs.GetSignedURL(fmt.Sprintf("profile/%d", ctx.UID()), true)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (h SignedURL) Profile(ctx context.Context, c *gin.Context) error {
 }
 
 func (h SignedURL) Article(ctx context.Context, c *gin.Context) error {
-	res, err := h.gcs.GetSignedURL(fmt.Sprintf("article/%d", ctx.UserID()), true)
+	res, err := h.gcs.GetSignedURL(fmt.Sprintf("article/%d", ctx.UID()), true)
 	if err != nil {
 		return err
 	}

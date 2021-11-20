@@ -4,14 +4,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/errors"
 	"github.com/nimil-jp/gin-utils/http/router"
 	"github.com/nimil-jp/gin-utils/util"
 
-	"go-gin-ddd/config"
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/resource/response"
@@ -44,117 +42,8 @@ func (u User) Create(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) ResetPasswordRequest(ctx context.Context, c *gin.Context) error {
-	var req request.UserResetPasswordRequest
-
-	if !bind(c, &req) {
-		return nil
-	}
-
-	res, err := u.userUseCase.ResetPasswordRequest(ctx, &req)
-	if err != nil {
-		return err
-	}
-
-	c.JSON(http.StatusOK, res)
-	return nil
-}
-
-func (u User) ResetPassword(ctx context.Context, c *gin.Context) error {
-	var req request.UserResetPassword
-
-	if !bind(c, &req) {
-		return nil
-	}
-
-	err := u.userUseCase.ResetPassword(ctx, &req)
-	if err != nil {
-		return err
-	}
-
-	c.Status(http.StatusOK)
-	return nil
-}
-
-func (u User) Login(ctx context.Context, c *gin.Context) error {
-	var req request.UserLogin
-
-	if !bind(c, &req) {
-		return nil
-	}
-
-	res, err := u.userUseCase.Login(ctx, &req)
-	if err != nil {
-		return err
-	}
-
-	if res == nil {
-		c.Status(http.StatusUnauthorized)
-		return nil
-	}
-
-	if req.Session {
-		session := sessions.DefaultMany(c, config.UserSession)
-		session.Set("token", res.Token)
-		session.Set("refresh_token", res.RefreshToken)
-		if err = session.Save(); err != nil {
-			return err
-		}
-		c.Status(http.StatusOK)
-	} else {
-		c.JSON(http.StatusOK, res)
-	}
-
-	return nil
-}
-
-func (u User) Logout(ctx context.Context, c *gin.Context) error {
-	if ctx.UserID() != 0 {
-		session := sessions.DefaultMany(c, config.UserSession)
-		session.Clear()
-		if err := session.Save(); err != nil {
-			return err
-		}
-	}
-
-	c.Status(http.StatusOK)
-	return nil
-}
-
-func (u User) RefreshToken(_ context.Context, c *gin.Context) error {
-	var req request.UserRefreshToken
-
-	if !bind(c, &req) {
-		return nil
-	}
-
-	res, err := u.userUseCase.RefreshToken(req.RefreshToken)
-	if err != nil {
-		return err
-	}
-
-	if res == nil {
-		c.Status(http.StatusUnauthorized)
-		return nil
-	}
-
-	if req.Session {
-		session := sessions.DefaultMany(c, config.UserSession)
-		session.Set("token", res.Token)
-		session.Set("refresh_token", res.RefreshToken)
-		if err = session.Save(); err != nil {
-			return err
-		}
-		c.Status(http.StatusOK)
-	} else {
-		c.JSON(http.StatusOK, res)
-	}
-
-	return nil
-}
-
 func (u User) GetMe(ctx context.Context, c *gin.Context) error {
-	user, err := u.userUseCase.GetByID(ctx, ctx.UserID())
+	user, err := u.userUseCase.GetByID(ctx, ctx.UID())
 	if err != nil {
 		return err
 	}
@@ -202,7 +91,7 @@ func (u User) Follow(follow bool) router.HandlerFunc {
 			return err
 		}
 
-		if userID != ctx.UserID() {
+		if userID != ctx.UID() {
 			return errors.Forbidden()
 		}
 
