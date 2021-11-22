@@ -318,8 +318,8 @@ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJ
 github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9Gz0M=
 github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
-github.com/nimil-jp/gin-utils v0.0.16 h1:u1Fzo0AzCYFFAxt8cNlaFv5JM2c+hDZbU/GMMlpA6rw=
-github.com/nimil-jp/gin-utils v0.0.16/go.mod h1:ltu4UuWiuee+ADjxaC4IfVuTPibNUJj672xKKC1F2FY=
+github.com/nimil-jp/gin-utils v0.0.17 h1:61iLPIdVd8skveqgjD1NgEttd+9qdl6CfnO8fd6zDvw=
+github.com/nimil-jp/gin-utils v0.0.17/go.mod h1:ltu4UuWiuee+ADjxaC4IfVuTPibNUJj672xKKC1F2FY=
 github.com/olekukonko/tablewriter v0.0.5 h1:P2Ga83D34wi1o9J6Wh1mRuqd4mF/x/lgBS7N7AbDhec=
 github.com/olekukonko/tablewriter v0.0.5/go.mod h1:hPp6KlRPjbx+hW8ykQs1w3UBbZlj6HuIJcUGPhkA7kY=
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
