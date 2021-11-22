@@ -21,6 +21,7 @@ import (
 
 type IUser interface {
 	Create(ctx context.Context, req *request.UserCreate) (uint, error)
+	SetUsername(ctx context.Context, username string) error
 
 	GetByID(ctx context.Context, id uint) (*entity.User, error)
 	GetByUsername(ctx context.Context, username string) (*entity.User, error)
@@ -66,14 +67,6 @@ func NewUser(ur repository.IUser, ar repository.IArticle, firebase gcp.IFirebase
 }
 
 func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error) {
-	userName, err := u.userRepo.UsernameExists(ctx, req.Username)
-	if err != nil {
-		return 0, err
-	}
-	if userName {
-		ctx.FieldError("Username", message.Duplicate)
-	}
-
 	newUser, err := entity.NewUser(ctx, req)
 	if err != nil {
 		return 0, err
@@ -97,6 +90,29 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error)
 	}
 
 	return id, nil
+}
+
+func (u user) SetUsername(ctx context.Context, username string) error {
+	userName, err := u.userRepo.UsernameExists(ctx, username)
+	if err != nil {
+		return err
+	}
+	if userName {
+		ctx.FieldError("Username", message.Duplicate)
+	}
+
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), nil)
+	if err != nil {
+		return err
+	}
+
+	user.SetUsername(ctx, username)
+
+	if ctx.IsInValid() {
+		return ctx.ValidationError()
+	}
+
+	return u.userRepo.Update(ctx, user)
 }
 
 func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {

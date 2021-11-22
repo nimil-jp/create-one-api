@@ -10,8 +10,8 @@ import (
 type User struct {
 	domain.SoftDeleteModel
 	FirebaseUID string `json:"-" gorm:"unique"`
-	Email       string `json:"email" validate:"required,email"`
-	Username    string `json:"username" validate:"required" gorm:"unique;index"`
+	Email       string `json:"email" gorm:"unique;index"`
+	Username    string `json:"username" gorm:"unique;index"`
 
 	PaypalConnected  bool    `json:"paypal_connected"`
 	PaypalMerchantID *string `json:"paypal_merchant_id"`
@@ -45,17 +45,24 @@ type User struct {
 	Supporters []*Support `json:"supporters" gorm:"foreignKey:ToID"`
 }
 
-func NewUser(ctx context.Context, dto *request.UserCreate) (*User, error) {
+func NewUser(_ context.Context, dto *request.UserCreate) (*User, error) {
 	var user = User{
 		FirebaseUID:     dto.FirebaseUID,
 		Email:           dto.Email,
-		Username:        dto.Username,
 		PaypalConnected: false,
 	}
 
-	ctx.Validate(user)
-
 	return &user, nil
+}
+
+func (u *User) SetUsername(ctx context.Context, username string) {
+	u.Username = username
+
+	ctx.Validate(&struct {
+		Username string `validate:"required,username"`
+	}{
+		Username: u.Username,
+	})
 }
 
 func (u *User) SetCoverImage(coverImage string) {

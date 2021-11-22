@@ -42,6 +42,16 @@ func (u User) Create(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
+func (u User) SetUsername(ctx context.Context, c *gin.Context) error {
+	err := u.userUseCase.SetUsername(ctx, c.Param("username"))
+	if err != nil {
+		return err
+	}
+
+	c.Status(http.StatusOK)
+	return nil
+}
+
 func (u User) GetMe(ctx context.Context, c *gin.Context) error {
 	user, err := u.userUseCase.GetByID(ctx, ctx.UID())
 	if err != nil {

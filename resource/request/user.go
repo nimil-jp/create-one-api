@@ -3,7 +3,6 @@ package request
 type UserCreate struct {
 	FirebaseUID string `json:"firebase_uid"`
 	Email       string `json:"email"`
-	Username    string `json:"username"`
 }
 
 // profile

@@ -1,6 +1,9 @@
 package persistence
 
 import (
+	"net/http"
+
+	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 
 	"github.com/nimil-jp/gin-utils/errors"
@@ -13,6 +16,12 @@ func dbError(err error) error {
 	case gorm.ErrRecordNotFound:
 		return errors.NotFound()
 	default:
+		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+			switch mysqlErr.Number {
+			case 1062:
+				return errors.NewExpected(http.StatusConflict, "リソースがすでに存在しています。")
+			}
+		}
 		return errors.NewUnexpected(err)
 	}
 }

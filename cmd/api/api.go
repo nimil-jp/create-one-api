@@ -121,6 +121,8 @@ func Execute() {
 			r.Get("me", userHandler.GetMe)
 
 			r.Group(":user_id", nil, func(r *router.Router) {
+				r.Patch("username/:username", userHandler.SetUsername)
+
 				r.Group("following", nil, func(r *router.Router) {
 					r.Post(":target_user_id", userHandler.Follow(true))
 					r.Delete(":target_user_id", userHandler.Follow(false))

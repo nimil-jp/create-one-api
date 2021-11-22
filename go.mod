@@ -6,11 +6,12 @@ require (
 	cloud.google.com/go/storage v1.18.0
 	firebase.google.com/go/v4 v4.6.1
 	github.com/gin-gonic/gin v1.7.4
+	github.com/go-playground/validator/v10 v10.9.0
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/ken109/gin-jwt v1.1.4
-	github.com/nimil-jp/gin-utils v0.0.13
+	github.com/nimil-jp/gin-utils v0.0.16
 	github.com/thoas/go-funk v0.9.1
 	go.uber.org/zap v1.19.1
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
@@ -30,7 +31,6 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
-	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/goccy/go-json v0.7.10 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
