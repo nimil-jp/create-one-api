@@ -443,7 +443,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\",\n    \"password_confirm\": \"{{password}}\",\n    \"username\": \"example_user\"\n}",
+							"raw": "{\n    \"firebase_uid\": \"{{firebase_uid}}\",\n    \"email\": \"{{email}}\",\n    \"username\": \"example_username\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -457,184 +457,6 @@
 							],
 							"path": [
 								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (!JSON.parse(pm.request.body.raw).session) {",
-									"    var res = pm.response.json()",
-									"",
-									"    pm.collectionVariables.set(\"token\", res[\"token\"])",
-									"    pm.collectionVariables.set(\"refresh_token\", res[\"refresh_token\"])",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"session\": true,\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base}}/users/login",
-							"host": [
-								"{{base}}"
-							],
-							"path": [
-								"users",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Logout",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base}}/users/logout",
-							"host": [
-								"{{base}}"
-							],
-							"path": [
-								"users",
-								"logout"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RefreshToken",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (!JSON.parse(pm.request.body.raw).session) {",
-									"    var res = pm.response.json()",
-									"",
-									"    pm.collectionVariables.set(\"token\", res[\"token\"])",
-									"    pm.collectionVariables.set(\"refresh_token\", res[\"refresh_token\"])",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"session\": true,\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base}}/users/refresh-token",
-							"host": [
-								"{{base}}"
-							],
-							"path": [
-								"users",
-								"refresh-token"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ResetPasswordRequest",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{email}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base}}/users/reset-password-request",
-							"host": [
-								"{{base}}"
-							],
-							"path": [
-								"users",
-								"reset-password-request"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ResetPassword",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"recovery_token\": \"{{recovery_token}}\",\n    \"password\": \"{{password}}\",\n    \"password_confirm\": \"{{password}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base}}/users/reset-password",
-							"host": [
-								"{{base}}"
-							],
-							"path": [
-								"users",
-								"reset-password"
 							]
 						}
 					},
@@ -874,27 +696,30 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"let url = pm.collectionVariables.get(\"base\")",
-					"let refresh_token = pm.collectionVariables.get(\"refresh_token\")",
+					"function now() {",
+					"    return Math.floor( new Date().getTime() / 1000 )",
+					"}",
 					"",
-					"if (url && refresh_token) {",
-					"    pm.sendRequest(",
+					"if (pm.collectionVariables.get(\"token\") && ",
+					"    pm.collectionVariables.get(\"expire\") > now()) return;",
+					"",
+					"pm.sendRequest({",
+					"    url: 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + pm.collectionVariables.get(\"web_api_key\"),",
+					"    method: 'POST',",
+					"    body: {",
+					"        mode: 'raw',",
+					"        raw: JSON.stringify(",
 					"        {",
-					"            url: `${url}/user/refresh-token`,",
-					"            method: \"POST\",",
-					"            body: {",
-					"                mode: \"raw\",",
-					"                raw: {",
-					"                    refresh_token",
-					"                }",
-					"            }",
-					"        }, ",
-					"        (err, res) => {",
-					"            pm.collectionVariables.set(\"token\", res.json()[\"token\"])",
-					"            pm.collectionVariables.set(\"refresh_token\", res.json()[\"refresh_token\"])",
+					"            \"email\": pm.collectionVariables.get(\"email\"),",
+					"            \"password\": pm.collectionVariables.get(\"password\"),",
+					"            \"returnSecureToken\": true",
 					"        }",
-					"    );",
-					"}"
+					"    )}",
+					"}, (err, res) => {",
+					"    pm.collectionVariables.set(\"token\", res.json().idToken)",
+					"    pm.collectionVariables.set(\"expire\", now() + Number(res.json().expiresIn))",
+					"    pm.collectionVariables.set(\"firebase_uid\", res.json().localId)",
+					"});"
 				]
 			}
 		},
@@ -909,6 +734,10 @@
 		}
 	],
 	"variable": [
+		{
+			"key": "web_api_key",
+			"value": "AIzaSyBJ597djsF1SOI0vKVpjd19oE9yCihlIA0"
+		},
 		{
 			"key": "base",
 			"value": "https://api.one.nimil.dev"
@@ -926,11 +755,11 @@
 			"value": ""
 		},
 		{
-			"key": "refresh_token",
+			"key": "expire",
 			"value": ""
 		},
 		{
-			"key": "recovery_token",
+			"key": "firebase_uid",
 			"value": ""
 		}
 	]
