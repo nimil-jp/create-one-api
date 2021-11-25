@@ -10,7 +10,6 @@ import (
 	"github.com/nimil-jp/gin-utils/http/router"
 	"github.com/nimil-jp/gin-utils/util"
 
-	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/resource/request"
 	"go-gin-ddd/resource/response"
 	"go-gin-ddd/usecase"
@@ -144,7 +143,7 @@ func (u User) Search(ctx context.Context, c *gin.Context) error {
 
 func (u User) GetBy(by string) router.HandlerFunc {
 	return func(ctx context.Context, c *gin.Context) error {
-		var user *entity.User
+		var user *response.User
 		var err error
 		switch by {
 		case "id":

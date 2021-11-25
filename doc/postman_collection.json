@@ -58,7 +58,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/by/id/1",
+									"raw": "{{base}}/users/by/id/:id",
 									"host": [
 										"{{base}}"
 									],
@@ -66,7 +66,13 @@
 										"users",
 										"by",
 										"id",
-										"1"
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
 									]
 								}
 							},
@@ -78,7 +84,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/by/username/ken109",
+									"raw": "{{base}}/users/by/username/:username",
 									"host": [
 										"{{base}}"
 									],
@@ -86,7 +92,13 @@
 										"users",
 										"by",
 										"username",
-										"ken109"
+										":username"
+									],
+									"variable": [
+										{
+											"key": "username",
+											"value": "ken109"
+										}
 									]
 								}
 							},
@@ -112,15 +124,21 @@
 									}
 								},
 								"url": {
-									"raw": "{{base}}/users/1/profile/cover-image",
+									"raw": "{{base}}/users/:user_id/profile/cover-image",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"profile",
 										"cover-image"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										}
 									]
 								}
 							},
@@ -141,14 +159,20 @@
 									}
 								},
 								"url": {
-									"raw": "{{base}}/users/1/profile",
+									"raw": "{{base}}/users/:user_id/profile",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"profile"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										}
 									]
 								}
 							},
@@ -160,15 +184,47 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/profile/connect-paypal",
+									"raw": "{{base}}/users/:user_id/profile/connect-paypal",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"profile",
 										"connect-paypal"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Username",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/:user_id/username/ken109",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										":user_id",
+										"username",
+										"ken109"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										}
 									]
 								}
 							},
@@ -185,13 +241,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/articles?length=10&page=1",
+									"raw": "{{base}}/users/:user_id/articles?length=10&page=1",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"articles"
 									],
 									"query": [
@@ -201,6 +257,12 @@
 										},
 										{
 											"key": "page",
+											"value": "1"
+										}
+									],
+									"variable": [
+										{
+											"key": "user_id",
 											"value": "1"
 										}
 									]
@@ -219,15 +281,25 @@
 								"method": "POST",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/following/2",
+									"raw": "{{base}}/users/:user_id/following/:target_user_id",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"following",
-										"2"
+										":target_user_id"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										},
+										{
+											"key": "target_user_id",
+											"value": "2"
+										}
 									]
 								}
 							},
@@ -239,15 +311,25 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/following/2",
+									"raw": "{{base}}/users/:user_id/following/:target_user_id",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"following",
-										"2"
+										":target_user_id"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										},
+										{
+											"key": "target_user_id",
+											"value": "2"
+										}
 									]
 								}
 							},
@@ -259,13 +341,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/following?length=10&page=1",
+									"raw": "{{base}}/users/:user_id/following?length=10&page=1",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"following"
 									],
 									"query": [
@@ -275,6 +357,12 @@
 										},
 										{
 											"key": "page",
+											"value": "1"
+										}
+									],
+									"variable": [
+										{
+											"key": "user_id",
 											"value": "1"
 										}
 									]
@@ -288,13 +376,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/followers?length=10&page=1",
+									"raw": "{{base}}/users/:user_id/followers?length=10&page=1",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"followers"
 									],
 									"query": [
@@ -304,6 +392,12 @@
 										},
 										{
 											"key": "page",
+											"value": "1"
+										}
+									],
+									"variable": [
+										{
+											"key": "user_id",
 											"value": "1"
 										}
 									]
@@ -317,13 +411,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/following/articles?length=10&page=1",
+									"raw": "{{base}}/users/:user_id/following/articles?length=10&page=1",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"following",
 										"articles"
 									],
@@ -334,6 +428,12 @@
 										},
 										{
 											"key": "page",
+											"value": "1"
+										}
+									],
+									"variable": [
+										{
+											"key": "user_id",
 											"value": "1"
 										}
 									]
@@ -352,13 +452,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/supporting?length=10&page=1",
+									"raw": "{{base}}/users/:user_id/supporting?length=10&page=1",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"supporting"
 									],
 									"query": [
@@ -368,6 +468,12 @@
 										},
 										{
 											"key": "page",
+											"value": "1"
+										}
+									],
+									"variable": [
+										{
+											"key": "user_id",
 											"value": "1"
 										}
 									]
@@ -381,13 +487,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/supporters?length=10&page=1",
+									"raw": "{{base}}/users/:user_id/supporters?length=10&page=1",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"supporters"
 									],
 									"query": [
@@ -397,6 +503,12 @@
 										},
 										{
 											"key": "page",
+											"value": "1"
+										}
+									],
+									"variable": [
+										{
+											"key": "user_id",
 											"value": "1"
 										}
 									]
@@ -410,13 +522,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/1/supporters/articles?length=10&page=1",
+									"raw": "{{base}}/users/:user_id/supporters/articles?length=10&page=1",
 									"host": [
 										"{{base}}"
 									],
 									"path": [
 										"users",
-										"1",
+										":user_id",
 										"supporters",
 										"articles"
 									],
@@ -427,6 +539,12 @@
 										},
 										{
 											"key": "page",
+											"value": "1"
+										}
+									],
+									"variable": [
+										{
+											"key": "user_id",
 											"value": "1"
 										}
 									]
@@ -443,7 +561,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firebase_uid\": \"{{firebase_uid}}\",\n    \"email\": \"{{email}}\",\n    \"username\": \"example_username\"\n}",
+							"raw": "{\n    \"firebase_uid\": \"{{firebase_uid}}\",\n    \"email\": \"{{email}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -579,13 +697,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base}}/articles/1",
+							"raw": "{{base}}/articles/:article_id",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
 								"articles",
-								"1"
+								":article_id"
+							],
+							"variable": [
+								{
+									"key": "article_id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -606,13 +730,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/articles/1",
+							"raw": "{{base}}/articles/:article_id",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
 								"articles",
-								"1"
+								":article_id"
+							],
+							"variable": [
+								{
+									"key": "article_id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -624,13 +754,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base}}/articles/1",
+							"raw": "{{base}}/articles/:article_id",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
 								"articles",
-								"1"
+								":article_id"
+							],
+							"variable": [
+								{
+									"key": "article_id",
+									"value": "1"
+								}
 							]
 						}
 					},

@@ -1,13 +1,12 @@
 package response
 
-import "time"
+import (
+	"go-gin-ddd/domain/entity"
+)
 
-type UserLogin struct {
-	Token        string `json:"token"`
-	RefreshToken string `json:"refresh_token"`
-}
-
-type UserResetPasswordRequest struct {
-	Duration time.Duration `json:"duration"`
-	Expire   time.Time     `json:"expire"`
+type User struct {
+	entity.User
+	FollowingCount  uint `json:"following_count"`
+	FollowersCount  uint `json:"followers_count"`
+	SupportersCount uint `json:"supporters_count"`
 }

@@ -17,14 +17,15 @@ import (
 	"go-gin-ddd/infrastructure/gcp"
 	"go-gin-ddd/infrastructure/paypal"
 	"go-gin-ddd/resource/request"
+	"go-gin-ddd/resource/response"
 )
 
 type IUser interface {
 	Create(ctx context.Context, req *request.UserCreate) (uint, error)
 	SetUsername(ctx context.Context, username string) error
 
-	GetByID(ctx context.Context, id uint) (*entity.User, error)
-	GetByUsername(ctx context.Context, username string) (*entity.User, error)
+	GetByID(ctx context.Context, id uint) (*response.User, error)
+	GetByUsername(ctx context.Context, username string) (*response.User, error)
 	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
 	EditProfile(ctx context.Context, req *request.UserEditProfile) error
 
@@ -115,24 +116,74 @@ func (u user) SetUsername(ctx context.Context, username string) error {
 	return u.userRepo.Update(ctx, user)
 }
 
-func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
-	return u.userRepo.GetByID(ctx, id, &repository.UserGetByOption{
+func (u user) GetByID(ctx context.Context, id uint) (*response.User, error) {
+	user, err := u.userRepo.GetByID(ctx, id, &repository.UserGetByOption{
 		Limit:             6,
 		PreloadFollowing:  true,
 		PreloadFollowers:  true,
 		PreloadSupporting: true,
 		PreloadSupporters: true,
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	_, following, err := u.userRepo.Following(ctx, &util.Paging{}, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, followers, err := u.userRepo.Followers(ctx, &util.Paging{}, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, supporters, err := u.userRepo.Supporters(ctx, &util.Paging{}, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response.User{
+		User:            *user,
+		FollowingCount:  following,
+		FollowersCount:  followers,
+		SupportersCount: supporters,
+	}, nil
 }
 
-func (u user) GetByUsername(ctx context.Context, username string) (*entity.User, error) {
-	return u.userRepo.GetByUsername(ctx, username, &repository.UserGetByOption{
+func (u user) GetByUsername(ctx context.Context, username string) (*response.User, error) {
+	user, err := u.userRepo.GetByUsername(ctx, username, &repository.UserGetByOption{
 		Limit:             6,
 		PreloadFollowing:  true,
 		PreloadFollowers:  true,
 		PreloadSupporting: true,
 		PreloadSupporters: true,
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	_, following, err := u.userRepo.Following(ctx, &util.Paging{}, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, followers, err := u.userRepo.Followers(ctx, &util.Paging{}, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, supporters, err := u.userRepo.Supporters(ctx, &util.Paging{}, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response.User{
+		User:            *user,
+		FollowingCount:  following,
+		FollowersCount:  followers,
+		SupportersCount: supporters,
+	}, nil
 }
 
 func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {

@@ -11,7 +11,7 @@ type User struct {
 	domain.SoftDeleteModel
 	FirebaseUID string `json:"-" gorm:"unique"`
 	Email       string `json:"email" gorm:"unique;index"`
-	Username    string `json:"username" gorm:"unique;index"`
+	Username    string `json:"username" gorm:"index"`
 
 	PaypalConnected  bool    `json:"paypal_connected"`
 	PaypalMerchantID *string `json:"paypal_merchant_id"`
