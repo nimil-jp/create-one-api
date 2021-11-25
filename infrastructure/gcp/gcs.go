@@ -8,6 +8,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/google/uuid"
+	"github.com/nimil-jp/gin-utils/errors"
 
 	"go-gin-ddd/config"
 	"go-gin-ddd/driver/gcp"
@@ -33,7 +34,7 @@ type SignedURL struct {
 func (gcs) GetSignedURL(dir string, public bool) (*SignedURL, error) {
 	key, err := uuid.NewRandom()
 	if err != nil {
-		return nil, err
+		return nil, errors.NewUnexpected(err)
 	}
 
 	keyString := fmt.Sprintf("%s/%s", dir, key.String())
@@ -51,7 +52,7 @@ func (gcs) GetSignedURL(dir string, public bool) (*SignedURL, error) {
 		Headers:        headers,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.NewUnexpected(err)
 	}
 
 	return &SignedURL{
@@ -65,5 +66,10 @@ func (gcs) Delete(key string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	return gcp.GcsClient().Bucket(config.Env.GCP.Bucket).Object(key).Delete(ctx)
+	err := gcp.GcsClient().Bucket(config.Env.GCP.Bucket).Object(key).Delete(ctx)
+	if err != nil {
+		return errors.NewUnexpected(err)
+	}
+
+	return nil
 }

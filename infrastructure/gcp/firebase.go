@@ -42,5 +42,10 @@ func (i firebase) SetClaimsUID(firebaseUID string, uid uint) error {
 
 	user.CustomClaims[fmt.Sprintf("%s_id", config.AppName)] = uid
 
-	return i.client.SetCustomUserClaims(ctx, firebaseUID, user.CustomClaims)
+	err = i.client.SetCustomUserClaims(ctx, firebaseUID, user.CustomClaims)
+	if err != nil {
+		return errors.NewUnexpected(err)
+	}
+
+	return nil
 }
