@@ -203,6 +203,10 @@ func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) err
 		return err
 	}
 
+	if ctx.Validate(req) {
+		return ctx.ValidationError()
+	}
+
 	user.AvatarImage = &req.AvatarImage
 	user.Name = &req.Name
 	user.About = &req.About
