@@ -25,34 +25,58 @@ func (u user) Create(ctx context.Context, user *entity.User) (uint, error) {
 	return user.ID, nil
 }
 
-func getByOptionScope(option *repository.UserGetByOption) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
+func getByOptionScope(db *gorm.DB, uid uint, option *repository.UserGetOption) func(*gorm.DB) *gorm.DB {
+	return func(query *gorm.DB) *gorm.DB {
 		if option != nil {
 			if option.PreloadFollowing {
-				db.Preload("Following", limit(option.Limit))
+				query.Preload("Following", limit(option.Limit))
 			}
 			if option.PreloadFollowers {
-				db.Preload("Followers", limit(option.Limit))
+				query.Preload("Followers", limit(option.Limit))
 			}
 			if option.PreloadSupporting {
-				db.Preload("Supporting", limit(option.Limit)).
+				query.Preload("Supporting", limit(option.Limit)).
 					Preload("Supporting.ToUser")
 			}
 			if option.PreloadSupporters {
-				db.Preload("Supporters", limit(option.Limit)).
+				query.Preload("Supporters", limit(option.Limit)).
 					Preload("Supporters.User")
 			}
+
+			if option.IncludeCount || option.IncludeRelation {
+				var selectQuery = "users.*"
+				var subQueries []interface{}
+
+				if option.IncludeCount {
+					selectQuery = selectQuery + ", (?) as following_count, (?) as followers_count, (?) as supporters_count"
+					subQueries = append(subQueries,
+						db.Table("user_follows").Select("COUNT(*)").Where("user_id = users.id"),
+						db.Table("user_follows").Select("COUNT(*)").Where("following_id = users.id"),
+						db.Table("supports").Select("COUNT(*)").Where("to_id = users.id"),
+					)
+				}
+
+				if option.IncludeRelation {
+					selectQuery = selectQuery + ", (?) as following, (?) as followed_by"
+					subQueries = append(subQueries,
+						db.Table("user_follows").Select("COUNT(*)").Where("user_id = ?", uid).Where("following_id = users.id"),
+						db.Table("user_follows").Select("COUNT(*)").Where("following_id = ?", uid).Where("user_id = users.id"),
+					)
+				}
+
+				query.Select(selectQuery, subQueries...)
+			}
 		}
-		return db
+		return query
 	}
 }
 
-func (u user) GetByID(ctx context.Context, id uint, option *repository.UserGetByOption) (*entity.User, error) {
+func (u user) GetByID(ctx context.Context, id uint, option *repository.UserGetOption) (*entity.User, error) {
 	db := ctx.DB()
 
 	var user entity.User
 	err := db.
-		Scopes(getByOptionScope(option)).
+		Scopes(getByOptionScope(db, ctx.UID(), option)).
 		First(&user, id).Error
 	if err != nil {
 		return nil, dbError(err)
@@ -60,12 +84,12 @@ func (u user) GetByID(ctx context.Context, id uint, option *repository.UserGetBy
 	return &user, nil
 }
 
-func (u user) GetByUsername(ctx context.Context, username string, option *repository.UserGetByOption) (*entity.User, error) {
+func (u user) GetByUsername(ctx context.Context, username string, option *repository.UserGetOption) (*entity.User, error) {
 	db := ctx.DB()
 
 	var user entity.User
 	err := db.
-		Scopes(getByOptionScope(option)).
+		Scopes(getByOptionScope(db, ctx.UID(), option)).
 		Where(&entity.User{Username: username}).
 		First(&user).Error
 	if err != nil {
@@ -136,7 +160,12 @@ func (u user) Search(ctx context.Context, paging *util.Paging, keyword string) (
 		return nil, 0, err
 	}
 
-	err = query.Scopes(paging.Query()).Find(&dest).Error
+	err = query.
+		Scopes(getByOptionScope(db, ctx.UID(), &repository.UserGetOption{
+			IncludeCount:    true,
+			IncludeRelation: true,
+		})).
+		Scopes(paging.Query()).Find(&dest).Error
 	if err != nil {
 		return nil, 0, dbError(err)
 	}
@@ -158,7 +187,12 @@ func (u user) Following(ctx context.Context, paging *util.Paging, id uint) ([]*e
 		return nil, 0, dbError(err)
 	}
 
-	err = query.Scopes(paging.Query()).Find(&users).Error
+	err = query.
+		Scopes(getByOptionScope(db, ctx.UID(), &repository.UserGetOption{
+			IncludeCount:    true,
+			IncludeRelation: true,
+		})).
+		Scopes(paging.Query()).Find(&users).Error
 	if err != nil {
 		return nil, 0, dbError(err)
 	}
@@ -179,7 +213,12 @@ func (u user) Followers(ctx context.Context, paging *util.Paging, id uint) ([]*e
 		return nil, 0, dbError(err)
 	}
 
-	err = query.Scopes(paging.Query()).Find(&users).Error
+	err = query.
+		Scopes(getByOptionScope(db, ctx.UID(), &repository.UserGetOption{
+			IncludeCount:    true,
+			IncludeRelation: true,
+		})).
+		Scopes(paging.Query()).Find(&users).Error
 	if err != nil {
 		return nil, 0, dbError(err)
 	}
@@ -200,7 +239,12 @@ func (u user) Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*
 		return nil, 0, dbError(err)
 	}
 
-	err = query.Scopes(paging.Query()).Find(&users).Error
+	err = query.
+		Scopes(getByOptionScope(db, ctx.UID(), &repository.UserGetOption{
+			IncludeCount:    true,
+			IncludeRelation: true,
+		})).
+		Scopes(paging.Query()).Find(&users).Error
 	if err != nil {
 		return nil, 0, dbError(err)
 	}
@@ -221,7 +265,12 @@ func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*
 		return nil, 0, dbError(err)
 	}
 
-	err = query.Scopes(paging.Query()).Find(&users).Error
+	err = query.
+		Scopes(getByOptionScope(db, ctx.UID(), &repository.UserGetOption{
+			IncludeCount:    true,
+			IncludeRelation: true,
+		})).
+		Scopes(paging.Query()).Find(&users).Error
 	if err != nil {
 		return nil, 0, dbError(err)
 	}

@@ -17,15 +17,14 @@ import (
 	"go-gin-ddd/infrastructure/gcp"
 	"go-gin-ddd/infrastructure/paypal"
 	"go-gin-ddd/resource/request"
-	"go-gin-ddd/resource/response"
 )
 
 type IUser interface {
 	Create(ctx context.Context, req *request.UserCreate) (uint, error)
 	SetUsername(ctx context.Context, username string) error
 
-	GetByID(ctx context.Context, id uint) (*response.User, error)
-	GetByUsername(ctx context.Context, username string) (*response.User, error)
+	GetByID(ctx context.Context, id uint) (*entity.User, error)
+	GetByUsername(ctx context.Context, username string) (*entity.User, error)
 	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
 	EditProfile(ctx context.Context, req *request.UserEditProfile) error
 
@@ -116,74 +115,38 @@ func (u user) SetUsername(ctx context.Context, username string) error {
 	return u.userRepo.Update(ctx, user)
 }
 
-func (u user) GetByID(ctx context.Context, id uint) (*response.User, error) {
-	user, err := u.userRepo.GetByID(ctx, id, &repository.UserGetByOption{
+func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
+	user, err := u.userRepo.GetByID(ctx, id, &repository.UserGetOption{
 		Limit:             6,
 		PreloadFollowing:  true,
 		PreloadFollowers:  true,
 		PreloadSupporting: true,
 		PreloadSupporters: true,
+		IncludeCount:      true,
+		IncludeRelation:   true,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	_, following, err := u.userRepo.Following(ctx, &util.Paging{}, user.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	_, followers, err := u.userRepo.Followers(ctx, &util.Paging{}, user.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	_, supporters, err := u.userRepo.Supporters(ctx, &util.Paging{}, user.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	return &response.User{
-		User:            *user,
-		FollowingCount:  following,
-		FollowersCount:  followers,
-		SupportersCount: supporters,
-	}, nil
+	return user, nil
 }
 
-func (u user) GetByUsername(ctx context.Context, username string) (*response.User, error) {
-	user, err := u.userRepo.GetByUsername(ctx, username, &repository.UserGetByOption{
+func (u user) GetByUsername(ctx context.Context, username string) (*entity.User, error) {
+	user, err := u.userRepo.GetByUsername(ctx, username, &repository.UserGetOption{
 		Limit:             6,
 		PreloadFollowing:  true,
 		PreloadFollowers:  true,
 		PreloadSupporting: true,
 		PreloadSupporters: true,
+		IncludeCount:      true,
+		IncludeRelation:   true,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	_, following, err := u.userRepo.Following(ctx, &util.Paging{}, user.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	_, followers, err := u.userRepo.Followers(ctx, &util.Paging{}, user.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	_, supporters, err := u.userRepo.Supporters(ctx, &util.Paging{}, user.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	return &response.User{
-		User:            *user,
-		FollowingCount:  following,
-		FollowersCount:  followers,
-		SupportersCount: supporters,
-	}, nil
+	return user, nil
 }
 
 func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {
@@ -276,7 +239,7 @@ func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []Timelin
 		Draft:          false,
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetByOption{
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetOption{
 		PreloadFollowing:  true,
 		PreloadSupporting: true,
 	})
@@ -329,7 +292,7 @@ func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uin
 		return nil, 0, errors.Forbidden()
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetByOption{PreloadFollowing: true})
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetOption{PreloadFollowing: true})
 	if err != nil {
 		return nil, 0, err
 	}
@@ -350,7 +313,7 @@ func (u user) SupportersArticles(ctx context.Context, paging *util.Paging, id ui
 		return nil, 0, errors.Forbidden()
 	}
 
-	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetByOption{PreloadSupporters: true})
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetOption{PreloadSupporters: true})
 	if err != nil {
 		return nil, 0, err
 	}

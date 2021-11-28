@@ -7,19 +7,22 @@ import (
 	"go-gin-ddd/domain/entity"
 )
 
-type UserGetByOption struct {
+type UserGetOption struct {
 	Limit int
 
 	PreloadFollowing  bool
 	PreloadFollowers  bool
 	PreloadSupporting bool
 	PreloadSupporters bool
+
+	IncludeCount    bool
+	IncludeRelation bool
 }
 
 type IUser interface {
 	Create(ctx context.Context, user *entity.User) (uint, error)
-	GetByID(ctx context.Context, id uint, option *UserGetByOption) (*entity.User, error)
-	GetByUsername(ctx context.Context, username string, option *UserGetByOption) (*entity.User, error)
+	GetByID(ctx context.Context, id uint, option *UserGetOption) (*entity.User, error)
+	GetByUsername(ctx context.Context, username string, option *UserGetOption) (*entity.User, error)
 	GetByEmail(ctx context.Context, email string) (*entity.User, error)
 	Update(ctx context.Context, user *entity.User) error
 

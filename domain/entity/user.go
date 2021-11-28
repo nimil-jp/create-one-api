@@ -43,6 +43,14 @@ type User struct {
 
 	Supporting []*Support `json:"supporting" gorm:"foreignKey:UserID"`
 	Supporters []*Support `json:"supporters" gorm:"foreignKey:ToID"`
+
+	Meta *struct {
+		FollowingCount  *uint `json:"following_count,omitempty" gorm:"-:migration"`
+		FollowersCount  *uint `json:"followers_count,omitempty" gorm:"-:migration"`
+		SupportersCount *uint `json:"supporters_count,omitempty" gorm:"-:migration"`
+		Following       *bool `json:"following,omitempty" gorm:"-:migration"`
+		FollowedBy      *bool `json:"followed_by,omitempty" gorm:"-:migration"`
+	} `json:"meta,omitempty" gorm:"embedded"`
 }
 
 func NewUser(_ context.Context, dto *request.UserCreate) (*User, error) {
