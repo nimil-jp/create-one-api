@@ -38,7 +38,7 @@ type User struct {
 
 	Articles []*Article `json:"articles"`
 
-	Following []*User `json:"followings" gorm:"many2many:user_follows;joinForeignKey:user_id;joinReferences:following_id"`
+	Following []*User `json:"following" gorm:"many2many:user_follows;joinForeignKey:user_id;joinReferences:following_id"`
 	Followers []*User `json:"followers" gorm:"many2many:user_follows;joinForeignKey:following_id;joinReferences:user_id"`
 
 	Supporting []*Support `json:"supporting" gorm:"foreignKey:UserID"`
