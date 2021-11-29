@@ -33,6 +33,7 @@ func (a support) Create(ctx context.Context, req *request.SupportCreate) (uint, 
 	return a.supportRepo.Create(ctx, &entity.Support{
 		UserID:     ctx.UID(),
 		ToID:       toUser.ID,
+		Message:    req.Message,
 		Unit:       toUser.UnitPrice,
 		Quantity:   req.Quantity,
 		PaypalData: req.PaypalData,

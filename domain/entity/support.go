@@ -11,6 +11,8 @@ type Support struct {
 	UserID uint `json:"user_id"`
 	ToID   uint `json:"to_id"`
 
+	Message string `json:"message"`
+
 	Unit     uint `json:"unit"`
 	Quantity uint `json:"quantity"`
 
