@@ -120,7 +120,6 @@ func (p *paypal) ConnectURL(email string) (string, error) {
 	var jsonStr = []byte(fmt.Sprintf(`{
 	"tracking_id": "%s",
 	"email": "%s",
-	"return_url": "%s/profile?paypal=connected",
     "operations": [
         {
             "operation": "API_INTEGRATION",
@@ -146,7 +145,10 @@ func (p *paypal) ConnectURL(email string) (string, error) {
             "type": "SHARE_DATA_CONSENT",
             "granted": true
         }
-    ]
+    ],
+    "partner_configuration_override": {
+        "return_url": "%s/dashboard?paypal=connected"
+    }
 }`, email, email, config.Env.App.URL))
 	var res struct {
 		Links []struct {
