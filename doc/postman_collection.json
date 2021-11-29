@@ -27,18 +27,18 @@
 					"response": []
 				},
 				{
-					"name": "Post",
+					"name": "Article",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base}}/signed-url/post",
+							"raw": "{{base}}/signed-url/article",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
 								"signed-url",
-								"post"
+								"article"
 							]
 						}
 					},
