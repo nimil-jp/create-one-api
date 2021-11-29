@@ -57,7 +57,7 @@ func getByOptionScope(db *gorm.DB, uid uint, option *repository.UserGetOption) f
 				}
 
 				if option.IncludeRelation {
-					selectQuery = selectQuery + ", (?) as following, (?) as followed_by"
+					selectQuery = selectQuery + ", (?) as is_following, (?) as is_followed_by"
 					subQueries = append(subQueries,
 						db.Table("user_follows").Select("COUNT(*)").Where("user_id = ?", uid).Where("following_id = users.id"),
 						db.Table("user_follows").Select("COUNT(*)").Where("following_id = ?", uid).Where("user_id = users.id"),

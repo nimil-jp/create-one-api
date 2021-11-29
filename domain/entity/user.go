@@ -45,11 +45,11 @@ type User struct {
 	Supporters []*Support `json:"supporters" gorm:"foreignKey:ToID"`
 
 	Meta *struct {
-		FollowingCount  *uint `json:"following_count,omitempty" gorm:"-:migration"`
-		FollowersCount  *uint `json:"followers_count,omitempty" gorm:"-:migration"`
-		SupportersCount *uint `json:"supporters_count,omitempty" gorm:"-:migration"`
-		Following       *bool `json:"following,omitempty" gorm:"-:migration"`
-		FollowedBy      *bool `json:"followed_by,omitempty" gorm:"-:migration"`
+		FollowingCount  *uint `json:"following_count,omitempty" gorm:"->;-:migration"`
+		FollowersCount  *uint `json:"followers_count,omitempty" gorm:"->;-:migration"`
+		SupportersCount *uint `json:"supporters_count,omitempty" gorm:"->;-:migration"`
+		IsFollowing     *bool `json:"is_following,omitempty" gorm:"->;-:migration"`
+		IsFollowedBy    *bool `json:"is_followed_by,omitempty" gorm:"->;-:migration"`
 	} `json:"meta,omitempty" gorm:"embedded"`
 }
 
