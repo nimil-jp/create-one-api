@@ -58,6 +58,7 @@ func NewUser(_ context.Context, dto *request.UserCreate) (*User, error) {
 		FirebaseUID:     dto.FirebaseUID,
 		Email:           dto.Email,
 		PaypalConnected: false,
+		UnitPrice:       500,
 	}
 
 	return &user, nil

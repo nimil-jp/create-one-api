@@ -10,6 +10,8 @@ type UserCreate struct {
 type UserSetCoverImage string
 
 type UserEditProfile struct {
+	UnitPrice uint `json:"unit_price" validate:"min=200,max=10000"`
+
 	AvatarImage  string `json:"avatar_image"`
 	Name         string `json:"name"`
 	About        string `json:"about"`

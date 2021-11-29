@@ -170,6 +170,8 @@ func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) err
 		return ctx.ValidationError()
 	}
 
+	user.UnitPrice = req.UnitPrice
+
 	user.AvatarImage = &req.AvatarImage
 	user.Name = &req.Name
 	user.About = &req.About
