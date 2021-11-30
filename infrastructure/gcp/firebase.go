@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"firebase.google.com/go/v4/auth"
 	"github.com/nimil-jp/gin-utils/errors"
 
 	"go-gin-ddd/config"
@@ -13,12 +12,12 @@ import (
 )
 
 type IFirebase interface {
-	AuthClient() *auth.Client
+	AuthClient() gcp.FirebaseAuthClient
 	SetClaimsUID(firebaseUID string, uid uint) error
 }
 
 type firebase struct {
-	client *auth.Client
+	client gcp.FirebaseAuthClient
 }
 
 func NewFirebase() IFirebase {
@@ -27,7 +26,7 @@ func NewFirebase() IFirebase {
 	}
 }
 
-func (i firebase) AuthClient() *auth.Client {
+func (i firebase) AuthClient() gcp.FirebaseAuthClient {
 	return i.client
 }
 

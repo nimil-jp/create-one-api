@@ -24,6 +24,20 @@ func init() {
 	}
 }
 
-func AuthClient() *auth.Client {
+type FirebaseAuthClient interface {
+	VerifyIDToken(ctx context.Context, idToken string) (*auth.Token, error)
+	GetUser(ctx context.Context, uid string) (*auth.UserRecord, error)
+	SetCustomUserClaims(ctx context.Context, uid string, customClaims map[string]interface{}) error
+}
+
+func AuthClient() FirebaseAuthClient {
+	if config.Env.GCP.TenantID != "" {
+		tenant, err := authClient.TenantManager.AuthForTenant(config.Env.GCP.TenantID)
+		if err != nil {
+			panic(err)
+		}
+		return tenant
+	}
+
 	return authClient
 }

@@ -39,6 +39,7 @@ type EnvType struct {
 	}
 	GCP struct {
 		CredentialPath string `required:"true" split_words:"true"`
+		TenantID       string `split_words:"true"`
 		Bucket         string `required:"true"`
 	}
 	Paypal struct {

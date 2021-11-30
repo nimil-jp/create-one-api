@@ -13,7 +13,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/ken109/gin-jwt v1.1.4
-	github.com/nimil-jp/gin-utils v0.0.18
+	github.com/nimil-jp/gin-utils v0.0.19
 	github.com/thoas/go-funk v0.9.1
 	go.uber.org/zap v1.19.1
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
