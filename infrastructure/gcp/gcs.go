@@ -50,6 +50,7 @@ func (gcs) GetSignedURL(dir string, public bool) (*SignedURL, error) {
 		Method:         http.MethodPut,
 		Expires:        time.Now().Add(config.SignedURLDuration),
 		Headers:        headers,
+		Scheme:         storage.SigningSchemeV4,
 	})
 	if err != nil {
 		return nil, errors.NewUnexpected(err)
