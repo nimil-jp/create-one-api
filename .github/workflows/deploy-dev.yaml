@@ -1,11 +1,16 @@
-name: Deploy
+name: Deploy to Development
 
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - ".github/**"
+      - "doc/**"
 
 env:
-  IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api:${{ github.SHA }}
+  IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api
+  LATEST_IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api:${{ github.SHA }}
+  TAGGED_IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api:${{ github.SHA }}
 
 jobs:
   deploy:
@@ -28,8 +33,12 @@ jobs:
 
       - name: Build and Push Image
         run: |
-          docker build . -t $IMAGE
-          docker push $IMAGE
+          docker build . -t $LATEST_IMAGE
+
+          docker tag $LATEST_IMAGE $TAGGED_IMAGE
+
+          docker push $LATEST_IMAGE
+          docker push $TAGGED_IMAGE
 
       - name: Install Kubectl
         run: |
@@ -38,4 +47,4 @@ jobs:
 
       - name: Deploy
         run: |
-          kubectl set image deployment/create-one-api create-one-api=$IMAGE
+          kubectl set image deployment/create-one-api-dev create-one-api=$TAGGED_IMAGE
