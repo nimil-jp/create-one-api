@@ -1,0 +1,26 @@
+name: Deploy to Production
+
+on:
+  release:
+    types:
+      - published
+
+env:
+  IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api:${{ github.ref_name }}
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup kubectl
+        uses: ./.github/actions/kubectl
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Deploy
+        run: |
+          kubectl set image deployment/create-one-api-prd create-one-api=$IMAGE
