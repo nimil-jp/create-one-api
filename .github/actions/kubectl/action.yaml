@@ -1,0 +1,30 @@
+name: Setup kubectl
+description: Setup kubectl
+inputs:
+  project_id:
+    required: true
+    description: GCP project id
+  service_account_key:
+    required: true
+    description: GCP service account key
+runs:
+  using: composite
+  steps:
+    - name: GCP Authenticate
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        project_id: ${{ inputs.project_id }}
+        service_account_key: ${{ inputs.service_account_key }}
+        export_default_credentials: true
+
+    - name: Setting gloud
+      shell: bash
+      run: |
+        gcloud auth configure-docker
+        gcloud container clusters get-credentials live01 --zone asia-northeast1-a --project ${{ inputs.project_id }}
+
+    - name: Install Kubectl
+      shell: bash
+      run: |
+        curl -Lo kubectl "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install kubectl /usr/local/bin/

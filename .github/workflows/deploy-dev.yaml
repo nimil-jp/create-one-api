@@ -19,17 +19,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: GCP Authenticate
-        uses: google-github-actions/setup-gcloud@master
+      - uses: ./.github/actions/kubectl
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-
-      - name: Setting gloud
-        run: |
-          gcloud auth configure-docker
-          gcloud container clusters get-credentials live01 --zone asia-northeast1-a --project ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Build and Push Image
         run: |
@@ -39,11 +32,6 @@ jobs:
 
           docker push $LATEST_IMAGE
           docker push $TAGGED_IMAGE
-
-      - name: Install Kubectl
-        run: |
-          curl -Lo kubectl "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-          sudo install kubectl /usr/local/bin/
 
       - name: Deploy
         run: |
