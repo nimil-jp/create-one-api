@@ -1,5 +1,5 @@
-name: Setup kubectl
-description: Setup kubectl for live01
+name: Setup GCP
+description: Setup gcloud, docker, kubectl
 inputs:
   workload_identity_provider:
     required: true
@@ -10,6 +10,11 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup gcloud
+      uses: google-github-actions/setup-gcloud@v0.2.1
+      with:
+        project_id: nimil-base
+
     - name: GCP Authenticate
       id: auth
       uses: google-github-actions/auth@v0.4.1
@@ -17,12 +22,11 @@ runs:
         workload_identity_provider: ${{ inputs.workload_identity_provider }}
         service_account: ${{ inputs.service_account }}
 
-    - name: Setup gcloud
-      uses: google-github-actions/setup-gcloud@master
-
     - name: Configure docker
       shell: bash
       run: |
+        gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+        
         gcloud auth configure-docker asia-northeast1-docker.pkg.dev
         gcloud container clusters get-credentials live01 --zone asia-northeast1-a --project nimil-base
 
