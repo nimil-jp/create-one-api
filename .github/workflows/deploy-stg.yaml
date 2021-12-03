@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 env:
-  IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api:${{ github.ref_name }}
+  IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/create-one/api:${{ github.ref_name }}
 
 jobs:
   deploy:
@@ -18,8 +18,8 @@ jobs:
       - name: Setup kubectl
         uses: ./.github/actions/kubectl
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Build and Push Image
         run: |
