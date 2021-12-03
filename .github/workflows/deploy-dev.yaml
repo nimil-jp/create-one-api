@@ -8,8 +8,7 @@ on:
       - "doc/**"
 
 env:
-  IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api
-  LATEST_IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api:${{ github.SHA }}
+  LATEST_IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api:latest
   TAGGED_IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/create-one-api:${{ github.SHA }}
 
 jobs:
