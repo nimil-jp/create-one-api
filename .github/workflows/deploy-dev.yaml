@@ -28,10 +28,9 @@ jobs:
       - name: Build and Push Image
         run: |
           docker build . -t $LATEST_IMAGE
+          docker push $LATEST_IMAGE
 
           docker tag $LATEST_IMAGE $TAGGED_IMAGE
-
-          docker push $LATEST_IMAGE
           docker push $TAGGED_IMAGE
 
       - name: Deploy
