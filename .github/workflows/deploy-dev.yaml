@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - ".github/**"
       - "doc/**"
 
 env:
@@ -21,8 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup kubectl
-        uses: ./.github/actions/kubectl
+      - name: Setup gcloud
+        uses: ./.github/actions/gcloud
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
@@ -39,7 +38,6 @@ jobs:
         run: |
           gcloud run deploy create-one-api-dev \
               --image $TAGGED_IMAGE \
-              --port $PORT \
               --project $GCP_PROJECT_ID \
               --region $GCP_REGION \
               --platform=managed \
