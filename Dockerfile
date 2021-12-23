@@ -17,6 +17,8 @@ FROM alpine
 RUN apk add tzdata
 ENV TZ=Asia/Tokyo
 
+ENV DOTENV_PATH=/go/src/.env
+
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/src/app /go/src/app
 
