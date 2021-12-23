@@ -34,8 +34,8 @@ jobs:
         run: |
           gcloud run deploy create-one-api-stg \
               --image $IMAGE \
-              --project $GCP_PROJECT_ID \
-              --region $GCP_REGION \
+              --project ${{ secrets.GCP_PROJECT_ID }} \
+              --region ${{ secrets.GCP_REGION }} \
               --platform=managed \
               --allow-unauthenticated \
               --quiet
