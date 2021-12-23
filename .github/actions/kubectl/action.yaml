@@ -1,5 +1,5 @@
 name: Setup GCP
-description: Setup gcloud, docker, kubectl
+description: Setup gcloud, docker
 inputs:
   workload_identity_provider:
     required: true
@@ -28,10 +28,3 @@ runs:
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
         
         gcloud auth configure-docker asia-northeast1-docker.pkg.dev
-        gcloud container clusters get-credentials live01 --zone asia-northeast1-a --project nimil-base
-
-    - name: Install Kubectl
-      shell: bash
-      run: |
-        curl -Lo kubectl "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-        sudo install kubectl /usr/local/bin/

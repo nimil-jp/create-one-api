@@ -26,4 +26,11 @@ jobs:
 
       - name: Deploy
         run: |
-          kubectl set image deployment/create-one-api-prd create-one-api=$IMAGE
+          gcloud run deploy create-one-api-prd \
+              --image $IMAGE \
+              --port $PORT \
+              --project $GCP_PROJECT_ID \
+              --region $GCP_REGION \
+              --platform=managed \
+              --allow-unauthenticated \
+              --quiet

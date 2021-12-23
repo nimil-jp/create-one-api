@@ -37,4 +37,11 @@ jobs:
 
       - name: Deploy
         run: |
-          kubectl set image deployment/create-one-api-dev create-one-api=$TAGGED_IMAGE
+          gcloud run deploy create-one-api-dev \
+              --image $TAGGED_IMAGE \
+              --port $PORT \
+              --project $GCP_PROJECT_ID \
+              --region $GCP_REGION \
+              --platform=managed \
+              --allow-unauthenticated \
+              --quiet
