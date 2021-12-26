@@ -6,7 +6,7 @@ on:
       - published
 
 env:
-  IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api:${{ github.ref_name }}
+  IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api
 
 jobs:
   deploy:
@@ -24,10 +24,17 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
+      - name: Build and Push Image
+        run: |
+          docker pull "$IMAGE:${{ github.ref_name }}"
+
+          docker tag "$IMAGE:${{ github.ref_name }}" "$IMAGE:prd"
+          docker push "$IMAGE:prd"
+
       - name: Deploy
         run: |
           gcloud run deploy createone-api-prd \
-              --image $IMAGE \
+              --image "$IMAGE:${{ github.ref_name }}" \
               --project ${{ secrets.GCP_PROJECT_ID }} \
               --region ${{ secrets.GCP_REGION }} \
               --platform=managed \

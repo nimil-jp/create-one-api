@@ -7,7 +7,7 @@ on:
       - "doc/**"
 
 env:
-  LATEST_IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api:latest
+  IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api
   TAGGED_IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api:${{ github.SHA }}
 
 jobs:
@@ -28,16 +28,19 @@ jobs:
 
       - name: Build and Push Image
         run: |
-          docker build . -t $LATEST_IMAGE
-          docker push $LATEST_IMAGE
+          docker build . -t "$IMAGE:${{ github.SHA }}"
+          docker push "$IMAGE:${{ github.SHA }}"
 
-          docker tag $LATEST_IMAGE $TAGGED_IMAGE
-          docker push $TAGGED_IMAGE
+          docker tag "$IMAGE:${{ github.SHA }}" "$IMAGE:dev"
+          docker push "$IMAGE:dev"
+
+          docker tag "$IMAGE:${{ github.SHA }}" "$IMAGE:latest"
+          docker push "$IMAGE:latest"
 
       - name: Deploy
         run: |
           gcloud run deploy createone-api-dev \
-              --image $TAGGED_IMAGE \
+              --image "$IMAGE:${{ github.SHA }}" \
               --project ${{ secrets.GCP_PROJECT_ID }} \
               --region ${{ secrets.GCP_REGION }} \
               --platform=managed \

@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 env:
-  IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api:${{ github.ref_name }}
+  IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api
 
 jobs:
   deploy:
@@ -26,14 +26,16 @@ jobs:
 
       - name: Build and Push Image
         run: |
-          docker build . -t $IMAGE
+          docker build . -t "$IMAGE:${{ github.ref_name }}"
+          docker push "$IMAGE:${{ github.ref_name }}"
 
-          docker push $IMAGE
+          docker tag "$IMAGE:${{ github.ref_name }}" "$IMAGE:stg"
+          docker push "$IMAGE:stg"
 
       - name: Deploy
         run: |
           gcloud run deploy createone-api-stg \
-              --image $IMAGE \
+              --image "$IMAGE:${{ github.ref_name }}" \
               --project ${{ secrets.GCP_PROJECT_ID }} \
               --region ${{ secrets.GCP_REGION }} \
               --platform=managed \
