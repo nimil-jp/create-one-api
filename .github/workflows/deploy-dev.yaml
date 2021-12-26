@@ -7,8 +7,8 @@ on:
       - "doc/**"
 
 env:
-  LATEST_IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/create-one/api:latest
-  TAGGED_IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/create-one/api:${{ github.SHA }}
+  LATEST_IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api:latest
+  TAGGED_IMAGE: asia-northeast1-docker.pkg.dev/nimil-base/createone/api:${{ github.SHA }}
 
 jobs:
   deploy:
