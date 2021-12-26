@@ -26,7 +26,7 @@ jobs:
 
       - name: Deploy
         run: |
-          gcloud run deploy create-one-api-prd \
+          gcloud run deploy createone-api-prd \
               --image $IMAGE \
               --project ${{ secrets.GCP_PROJECT_ID }} \
               --region ${{ secrets.GCP_REGION }} \
