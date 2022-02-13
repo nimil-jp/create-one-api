@@ -152,8 +152,10 @@ func (u user) Search(ctx context.Context, paging *util.Paging, keyword string) (
 	query := db.
 		Model(&entity.User{}).
 		Preload("Articles", limit(2)).
-		Where("username LIKE ?", "%"+keyword+"%").
-		Where("name LIKE ?", "%"+keyword+"%")
+		Where(
+			db.Or("username LIKE ?", "%"+keyword+"%").
+				Or("name LIKE ?", "%"+keyword+"%"),
+		)
 
 	count, err := paging.GetCount(query)
 	if err != nil {
