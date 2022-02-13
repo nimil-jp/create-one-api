@@ -99,6 +99,7 @@ func Execute() {
 
 				r.Get("supporting", userHandler.Supporting)
 				r.Get("supporters", userHandler.Supporters)
+				r.Get("articles", userHandler.Articles)
 			})
 		})
 
@@ -138,10 +139,6 @@ func Execute() {
 					r.Group("articles", nil, func(r *router.Router) {
 						r.Get("", userHandler.SupportersArticles)
 					})
-				})
-
-				r.Group("articles", nil, func(r *router.Router) {
-					r.Get("", userHandler.Articles)
 				})
 
 				r.Group("profile", nil, func(r *router.Router) {
