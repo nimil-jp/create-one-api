@@ -641,7 +641,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"to_id\": 2,\n    \"quantity\": 3,\n    \"paypal_data\": {}\n}",
+							"raw": "{\n    \"to_id\": 2,\n    \"message\": \"応援してます\",\n    \"quantity\": 3,\n    \"paypal_data\": {}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -672,7 +672,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"example\",\n    \"body\": \"html string\",\n    \"draft\": false,\n    \"published_at\": \"2021-10-28T02:49:59+09:00\"\n}",
+							"raw": "{\n    \"thumbnail\": \"article/1/44043b5b-4c68-436f-94a3-72b52c3360db\",\n    \"title\": \"example\",\n    \"body\": \"html string\",\n    \"draft\": false,\n    \"published_at\": \"2021-10-28T02:49:59+09:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -839,8 +839,16 @@
 					"if (pm.collectionVariables.get(\"token\") && ",
 					"    pm.collectionVariables.get(\"expire\") > now()) return;",
 					"",
+					"const env = pm.collectionVariables.get(\"env\")",
+					"",
+					"const tenantId = {",
+					"    \"local\": \"local-mdch7\",",
+					"    \"dev\": \"development-4hnty\",",
+					"    \"stg\": \"staging-n5vnx\"",
+					"}",
+					"",
 					"pm.sendRequest({",
-					"    url: 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + pm.collectionVariables.get(\"web_api_key\"),",
+					"    url: 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDt6GF7spx2fU8r8x-hNiACJSN_P_oE5UM',",
 					"    method: 'POST',",
 					"    body: {",
 					"        mode: 'raw',",
@@ -848,7 +856,8 @@
 					"        {",
 					"            \"email\": pm.collectionVariables.get(\"email\"),",
 					"            \"password\": pm.collectionVariables.get(\"password\"),",
-					"            \"returnSecureToken\": true",
+					"            \"returnSecureToken\": true,",
+					"            ...(env === \"prd\" ? {} : {\"tenantId\": tenantId[env]})",
 					"        }",
 					"    )}",
 					"}, (err, res) => {",
@@ -871,12 +880,13 @@
 	],
 	"variable": [
 		{
-			"key": "web_api_key",
-			"value": "AIzaSyBJ597djsF1SOI0vKVpjd19oE9yCihlIA0"
+			"key": "env",
+			"value": "local",
+			"type": "string"
 		},
 		{
 			"key": "base",
-			"value": "https://api.one.nimil.dev"
+			"value": "https://dev.createone.me"
 		},
 		{
 			"key": "email",

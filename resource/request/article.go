@@ -5,6 +5,7 @@ import (
 )
 
 type ArticleCreate struct {
+	Thumbnail   string     `json:"thumbnail"`
 	Title       string     `json:"title"`
 	Body        string     `json:"body"`
 	Draft       bool       `json:"draft"`
