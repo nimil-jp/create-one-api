@@ -17,7 +17,7 @@ type Article struct {
 	Thumbnail   *string    `json:"thumbnail"`
 	Title       string     `json:"title"`
 	Body        string     `json:"body"`
-	Draft       bool       `json:"draft" gorm:"index:list"`
+	Draft       *bool      `json:"draft" gorm:"index:list"`
 	PublishedAt *time.Time `json:"published_at" gorm:"index:list"`
 
 	User *User `json:"user"`
@@ -29,7 +29,7 @@ func NewArticle(ctx context.Context, dto *request.ArticleCreate) *Article {
 		Thumbnail:   &dto.Thumbnail,
 		Title:       dto.Title,
 		Body:        dto.Body,
-		Draft:       dto.Draft,
+		Draft:       &dto.Draft,
 		PublishedAt: dto.PublishedAt,
 	}
 }
@@ -38,7 +38,7 @@ func (e *Article) Update(dto *request.ArticleUpdate) {
 	e.Thumbnail = &dto.Thumbnail
 	e.Title = dto.Title
 	e.Body = dto.Body
-	e.Draft = dto.Draft
+	e.Draft = &dto.Draft
 	e.PublishedAt = dto.PublishedAt
 }
 
