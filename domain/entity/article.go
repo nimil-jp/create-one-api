@@ -15,8 +15,8 @@ type Article struct {
 	domain.SoftDeleteModel
 	UserID      uint       `json:"user_id"`
 	Thumbnail   *string    `json:"thumbnail"`
-	Title       string     `json:"title"`
-	Body        string     `json:"body"`
+	Title       *string    `json:"title"`
+	Body        *string    `json:"body"`
 	Draft       *bool      `json:"draft" gorm:"index:list"`
 	PublishedAt *time.Time `json:"published_at" gorm:"index:list"`
 
@@ -27,8 +27,8 @@ func NewArticle(ctx context.Context, dto *request.ArticleCreate) *Article {
 	return &Article{
 		UserID:      ctx.UID(),
 		Thumbnail:   &dto.Thumbnail,
-		Title:       dto.Title,
-		Body:        dto.Body,
+		Title:       &dto.Title,
+		Body:        &dto.Body,
 		Draft:       &dto.Draft,
 		PublishedAt: dto.PublishedAt,
 	}
@@ -36,8 +36,8 @@ func NewArticle(ctx context.Context, dto *request.ArticleCreate) *Article {
 
 func (e *Article) Update(dto *request.ArticleUpdate) {
 	e.Thumbnail = &dto.Thumbnail
-	e.Title = dto.Title
-	e.Body = dto.Body
+	e.Title = &dto.Title
+	e.Body = &dto.Body
 	e.Draft = &dto.Draft
 	e.PublishedAt = dto.PublishedAt
 }
