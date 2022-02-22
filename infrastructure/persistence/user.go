@@ -233,6 +233,7 @@ func (u user) Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*
 	var users []*entity.User
 	query := db.Table("supports").
 		Select("`users`.*").
+		Distinct("`users`.`id`").
 		Joins("JOIN users ON users.id = supports.to_id AND users.deleted_at IS NULL").
 		Where("supports.user_id = ?", id)
 
@@ -259,6 +260,7 @@ func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*
 	var users []*entity.User
 	query := db.Table("supports").
 		Select("`users`.*").
+		Distinct("`users`.`id`").
 		Joins("JOIN users ON users.id = supports.user_id AND users.deleted_at IS NULL").
 		Where("supports.to_id = ?", id)
 
