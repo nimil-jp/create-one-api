@@ -23,7 +23,7 @@ func init() {
 }
 
 func usernameValidator() validator.Func {
-	var regex = regexp.MustCompile(`^[a-zA-Z0-9]+$`)
+	var regex = regexp.MustCompile(`^[a-zA-Z0-9-_]+$`)
 	return func(fl validator.FieldLevel) bool {
 		return regex.MatchString(fl.Field().String())
 	}
