@@ -35,7 +35,7 @@ type IUser interface {
 	// Timeline のリターンがArticleになっているが、複数コンテンツに対応した場合にはinterface{}型になる
 	Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error)
 
-	Articles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
+	Articles(ctx context.Context, paging *util.Paging, id uint, recent bool) ([]*entity.Article, uint, error)
 
 	Following(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 	Followers(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
@@ -229,10 +229,11 @@ func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []Timelin
 	return articles, nil
 }
 
-func (u user) Articles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {
+func (u user) Articles(ctx context.Context, paging *util.Paging, id uint, recent bool) ([]*entity.Article, uint, error) {
 	return u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
 		UserIDs: []uint{id},
 		Draft:   ctx.UID() == id,
+		Recent:  recent,
 	})
 }
 

@@ -68,6 +68,12 @@ func (u article) Search(ctx context.Context, paging *util.Paging, option reposit
 				db.Where("draft = ?", false).
 					Where("published_at <= ?", time.Now())
 			}
+
+			if option.Recent {
+				db.Order("created_at desc")
+			} else {
+				db.Order("created_at asc")
+			}
 			return db
 		})
 

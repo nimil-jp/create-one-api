@@ -115,7 +115,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base}}/users/:user_id/articles?length=10&page=1",
+									"raw": "{{base}}/users/:user_id/articles?length=10&page=1&recent=true",
 									"host": [
 										"{{base}}"
 									],
@@ -132,6 +132,10 @@
 										{
 											"key": "page",
 											"value": "1"
+										},
+										{
+											"key": "recent",
+											"value": "true"
 										}
 									],
 									"variable": [

@@ -11,6 +11,8 @@ type ArticleSearchOption struct {
 	UserIDs        []uint
 	ExcludeUserIDs []uint
 	Draft          bool
+
+	Recent bool
 }
 
 type IArticle interface {

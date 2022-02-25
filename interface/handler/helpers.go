@@ -25,3 +25,11 @@ func uintParam(c *gin.Context, key string) (uint, error) {
 	}
 	return uint(id), nil
 }
+
+func boolQuery(c *gin.Context, key string) (bool, error) {
+	value, err := strconv.ParseBool(c.Query(key))
+	if err != nil {
+		return false, errors.NewUnexpected(err)
+	}
+	return value, nil
+}

@@ -189,7 +189,12 @@ func (u User) Articles(ctx context.Context, c *gin.Context) error {
 		return err
 	}
 
-	articles, count, err := u.userUseCase.Articles(ctx, paging, id)
+	recent, err := boolQuery(c, "recent")
+	if err != nil {
+		recent = true
+	}
+
+	articles, count, err := u.userUseCase.Articles(ctx, paging, id, recent)
 	if err != nil {
 		return err
 	}
