@@ -64,23 +64,53 @@ func NewUser(_ context.Context, dto *request.UserCreate) (*User, error) {
 	return &user, nil
 }
 
-func (u *User) SetUsername(ctx context.Context, username string) {
-	u.Username = username
-
-	ctx.Validate(&struct {
-		Username string `validate:"required,username"`
-	}{
-		Username: u.Username,
-	})
-}
-
-func (u *User) SetCoverImage(coverImage string) {
-	u.CoverImage = &coverImage
-}
-
 func (u *User) SetPaypal(merchantID string) {
 	u.PaypalConnected = true
 	u.PaypalMerchantID = &merchantID
+}
+
+func (u *User) SetEdit(dto *request.UserEditRequest) {
+	u.UnitPrice = dto.UnitPrice
+
+	u.AvatarImage = &dto.AvatarImage
+	u.Name = &dto.Name
+	u.About = &dto.About
+	u.Introduction = &dto.Introduction
+
+	u.Website = &dto.Website
+	u.Youtube = &dto.Youtube
+	u.Twitter = &dto.Twitter
+	u.Facebook = &dto.Facebook
+	u.Instagram = &dto.Instagram
+	u.Pinterest = &dto.Pinterest
+	u.Linkedin = &dto.Linkedin
+	u.Github = &dto.Github
+	u.Qiita = &dto.Qiita
+	u.Zenn = &dto.Zenn
+}
+
+func (u *User) SetPatch(dto *request.UserPatchRequest) {
+	u.Username = dto.Username
+
+	u.UnitPrice = dto.UnitPrice
+
+	u.CoverImage = dto.CoverImage
+
+	u.AvatarImage = dto.AvatarImage
+	u.Name = dto.Name
+	u.About = dto.About
+	u.Introduction = dto.Introduction
+
+	u.Website = dto.Website
+	u.Youtube = dto.Youtube
+	u.Twitter = dto.Twitter
+	u.Facebook = dto.Facebook
+	u.Instagram = dto.Instagram
+	u.Pinterest = dto.Pinterest
+	u.Linkedin = dto.Linkedin
+	u.Github = dto.Github
+	u.Qiita = dto.Qiita
+	u.Zenn = dto.Zenn
 }
 
 func (u User) FollowingIDs() []uint {

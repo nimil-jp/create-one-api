@@ -107,132 +107,6 @@
 					]
 				},
 				{
-					"name": "Profile",
-					"item": [
-						{
-							"name": "Cover Image",
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "\"b1d84ce9-97be-4028-9d21-946b711e730b\"",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base}}/users/:user_id/profile/cover-image",
-									"host": [
-										"{{base}}"
-									],
-									"path": [
-										"users",
-										":user_id",
-										"profile",
-										"cover-image"
-									],
-									"variable": [
-										{
-											"key": "user_id",
-											"value": "1"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Edit",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"unit_price\": 500,\n    \"avatar_image\": \"\",\n    \"name\": \"Test Name\",\n    \"about\": \"Engineer\",\n    \"introduction\": \"\",\n    \"website\": \"\",\n    \"youtube\": \"\",\n    \"twitter\": \"\",\n    \"facebook\": \"\",\n    \"instagram\": \"\",\n    \"pinterest\": \"\",\n    \"linkedin\": \"\",\n    \"github\": \"\",\n    \"qiita\": \"\",\n    \"zenn\": \"\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base}}/users/:user_id/profile",
-									"host": [
-										"{{base}}"
-									],
-									"path": [
-										"users",
-										":user_id",
-										"profile"
-									],
-									"variable": [
-										{
-											"key": "user_id",
-											"value": "1"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "ConnectPaypal",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base}}/users/:user_id/profile/connect-paypal",
-									"host": [
-										"{{base}}"
-									],
-									"path": [
-										"users",
-										":user_id",
-										"profile",
-										"connect-paypal"
-									],
-									"variable": [
-										{
-											"key": "user_id",
-											"value": "1"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Username",
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"url": {
-									"raw": "{{base}}/users/:user_id/username/ken109",
-									"host": [
-										"{{base}}"
-									],
-									"path": [
-										"users",
-										":user_id",
-										"username",
-										"ken109"
-									],
-									"variable": [
-										{
-											"key": "user_id",
-											"value": "1"
-										}
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
 					"name": "Articles",
 					"item": [
 						{
@@ -628,6 +502,200 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"unit_price\": 500,\n    \"avatar_image\": \"\",\n    \"name\": \"Test Name\",\n    \"about\": \"Engineer\",\n    \"introduction\": \"\",\n    \"website\": \"https://ken109.com\",\n    \"youtube\": \"\",\n    \"twitter\": \"\",\n    \"facebook\": \"\",\n    \"instagram\": \"\",\n    \"pinterest\": \"\",\n    \"linkedin\": \"\",\n    \"github\": \"\",\n    \"qiita\": \"\",\n    \"zenn\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/users/:user_id",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"users",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"ken109\",\n    \"cover_image\": \"profile/2/a3b15dea-279d-40ba-96eb-c664198c3489\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/users/:user_id",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"users",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Patch Username",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"ken109\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/users/:user_id",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										":user_id"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "X-Request-Id",
+									"value": "ef2e97f6-981b-4a4d-9e51-ba653243f81f"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 25 Feb 2022 05:18:28 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "0"
+								}
+							],
+							"cookie": [],
+							"body": null
+						},
+						{
+							"name": "Patch Cover Image",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"cover_image\": \"profile/2/a3b15dea-279d-40ba-96eb-c664198c3489\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base}}/users/:user_id",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										":user_id"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "X-Request-Id",
+									"value": "38d2b00f-8d01-43ed-a987-3fc1a75bbb55"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 25 Feb 2022 05:26:38 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "0"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				},
+				{
+					"name": "ConnectPaypal",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base}}/users/:user_id/connect-paypal",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"connect-paypal"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -722,7 +790,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"edited example\",\n    \"body\": \"html string\",\n    \"draft\": false,\n    \"published_at\": \"2021-10-28T02:49:59+09:00\"\n}",
+							"raw": "{\n    \"thumbnail\": \"\",\n    \"title\": \"edited example\",\n    \"body\": \"html string\",\n    \"draft\": false,\n    \"published_at\": \"2021-10-28T02:49:59+09:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

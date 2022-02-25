@@ -10,7 +10,6 @@ import (
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/errors"
 
-	"go-gin-ddd/config/message"
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
 	emailInfra "go-gin-ddd/infrastructure/email"
@@ -21,12 +20,11 @@ import (
 
 type IUser interface {
 	Create(ctx context.Context, req *request.UserCreate) (uint, error)
-	SetUsername(ctx context.Context, username string) error
 
 	GetByID(ctx context.Context, id uint) (*entity.User, error)
 	GetByUsername(ctx context.Context, username string) (*entity.User, error)
-	SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error
-	EditProfile(ctx context.Context, req *request.UserEditProfile) error
+	Edit(ctx context.Context, req *request.UserEditRequest) error
+	Patch(ctx context.Context, req *request.UserPatchRequest) error
 
 	Follow(ctx context.Context, id uint, follow bool) error
 
@@ -92,29 +90,6 @@ func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error)
 	return id, nil
 }
 
-func (u user) SetUsername(ctx context.Context, username string) error {
-	userName, err := u.userRepo.UsernameExists(ctx, username)
-	if err != nil {
-		return err
-	}
-	if userName {
-		ctx.FieldError("Username", message.Duplicate)
-	}
-
-	user, err := u.userRepo.GetByID(ctx, ctx.UID(), nil)
-	if err != nil {
-		return err
-	}
-
-	user.SetUsername(ctx, username)
-
-	if ctx.IsInValid() {
-		return ctx.ValidationError()
-	}
-
-	return u.userRepo.Update(ctx, user)
-}
-
 func (u user) GetByID(ctx context.Context, id uint) (*entity.User, error) {
 	user, err := u.userRepo.GetByID(ctx, id, &repository.UserGetOption{
 		Limit:             6,
@@ -149,18 +124,7 @@ func (u user) GetByUsername(ctx context.Context, username string) (*entity.User,
 	return user, nil
 }
 
-func (u user) SetCoverImage(ctx context.Context, req *request.UserSetCoverImage) error {
-	user, err := u.userRepo.GetByID(ctx, ctx.UID(), nil)
-	if err != nil {
-		return err
-	}
-
-	user.SetCoverImage(string(*req))
-
-	return u.userRepo.Update(ctx, user)
-}
-
-func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) error {
+func (u user) Edit(ctx context.Context, req *request.UserEditRequest) error {
 	user, err := u.userRepo.GetByID(ctx, ctx.UID(), nil)
 	if err != nil {
 		return err
@@ -170,23 +134,19 @@ func (u user) EditProfile(ctx context.Context, req *request.UserEditProfile) err
 		return ctx.ValidationError()
 	}
 
-	user.UnitPrice = req.UnitPrice
+	user.SetEdit(req)
 
-	user.AvatarImage = &req.AvatarImage
-	user.Name = &req.Name
-	user.About = &req.About
-	user.Introduction = &req.Introduction
+	return u.userRepo.Update(ctx, user)
+}
 
-	user.Website = &req.Website
-	user.Youtube = &req.Youtube
-	user.Twitter = &req.Twitter
-	user.Facebook = &req.Facebook
-	user.Instagram = &req.Instagram
-	user.Pinterest = &req.Pinterest
-	user.Linkedin = &req.Linkedin
-	user.Github = &req.Github
-	user.Qiita = &req.Qiita
-	user.Zenn = &req.Zenn
+func (u user) Patch(ctx context.Context, req *request.UserPatchRequest) error {
+	if ctx.Validate(req) {
+		return ctx.ValidationError()
+	}
+
+	user := new(entity.User)
+	user.ID = ctx.UID()
+	user.SetPatch(req)
 
 	return u.userRepo.Update(ctx, user)
 }

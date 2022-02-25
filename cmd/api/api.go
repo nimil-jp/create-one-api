@@ -122,7 +122,9 @@ func Execute() {
 			r.Get("me", userHandler.GetMe)
 
 			r.Group(":user_id", nil, func(r *router.Router) {
-				r.Patch("username/:username", userHandler.SetUsername)
+				r.Put("", userHandler.Edit)
+				r.Patch("", userHandler.Patch)
+				r.Get("connect-paypal", userHandler.ConnectPaypal)
 
 				r.Group("following", nil, func(r *router.Router) {
 					r.Post(":target_user_id", userHandler.Follow(true))
@@ -139,12 +141,6 @@ func Execute() {
 					r.Group("articles", nil, func(r *router.Router) {
 						r.Get("", userHandler.SupportersArticles)
 					})
-				})
-
-				r.Group("profile", nil, func(r *router.Router) {
-					r.Patch("cover-image", userHandler.SetCoverImage)
-					r.Put("", userHandler.EditProfile)
-					r.Get("connect-paypal", userHandler.ConnectPaypal)
 				})
 			})
 		})

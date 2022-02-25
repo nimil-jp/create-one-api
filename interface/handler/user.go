@@ -42,16 +42,6 @@ func (u User) Create(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) SetUsername(ctx context.Context, c *gin.Context) error {
-	err := u.userUseCase.SetUsername(ctx, c.Param("username"))
-	if err != nil {
-		return err
-	}
-
-	c.Status(http.StatusOK)
-	return nil
-}
-
 func (u User) GetMe(ctx context.Context, c *gin.Context) error {
 	user, err := u.userUseCase.GetByID(ctx, ctx.UID())
 	if err != nil {
@@ -62,14 +52,14 @@ func (u User) GetMe(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) SetCoverImage(ctx context.Context, c *gin.Context) error {
-	var req request.UserSetCoverImage
+func (u User) Edit(ctx context.Context, c *gin.Context) error {
+	var req request.UserEditRequest
 
 	if !bind(c, &req) {
 		return nil
 	}
 
-	err := u.userUseCase.SetCoverImage(ctx, &req)
+	err := u.userUseCase.Edit(ctx, &req)
 	if err != nil {
 		return err
 	}
@@ -78,14 +68,14 @@ func (u User) SetCoverImage(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
-func (u User) EditProfile(ctx context.Context, c *gin.Context) error {
-	var req request.UserEditProfile
+func (u User) Patch(ctx context.Context, c *gin.Context) error {
+	var req request.UserPatchRequest
 
 	if !bind(c, &req) {
 		return nil
 	}
 
-	err := u.userUseCase.EditProfile(ctx, &req)
+	err := u.userUseCase.Patch(ctx, &req)
 	if err != nil {
 		return err
 	}
