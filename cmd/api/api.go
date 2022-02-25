@@ -104,6 +104,7 @@ func Execute() {
 		})
 
 		r.Group("articles", nil, func(r *router.Router) {
+			r.Get("", articleHandler.Search)
 			r.Get(":id", articleHandler.GetByID)
 		})
 	})

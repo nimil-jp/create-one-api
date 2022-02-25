@@ -5,6 +5,7 @@ import (
 
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/errors"
+	"github.com/nimil-jp/gin-utils/util"
 
 	"go-gin-ddd/domain/entity"
 	"go-gin-ddd/domain/repository"
@@ -13,6 +14,7 @@ import (
 
 type IArticle interface {
 	Create(ctx context.Context, req *request.ArticleCreate) (uint, error)
+	Search(ctx context.Context, paging *util.Paging, keyword string, recent bool) ([]*entity.Article, uint, error)
 	GetByID(ctx context.Context, id uint) (*entity.Article, error)
 	Update(ctx context.Context, id uint, req *request.ArticleUpdate) error
 	Delete(ctx context.Context, id uint) error
@@ -30,6 +32,15 @@ func NewArticle(tr repository.IArticle) IArticle {
 
 func (a article) Create(ctx context.Context, req *request.ArticleCreate) (uint, error) {
 	return a.articleRepo.Create(ctx, entity.NewArticle(ctx, req))
+}
+
+func (a article) Search(ctx context.Context, paging *util.Paging, keyword string, recent bool) ([]*entity.Article, uint, error) {
+	return a.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
+		ExcludeUserIDs: []uint{ctx.UID()},
+		Draft:          false,
+		Keyword:        &keyword,
+		Recent:         recent,
+	})
 }
 
 func (a article) GetByID(ctx context.Context, id uint) (*entity.Article, error) {

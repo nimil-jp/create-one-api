@@ -56,25 +56,32 @@ func (u article) Search(ctx context.Context, paging *util.Paging, option reposit
 	query := db.
 		Model(&entity.Article{}).
 		Preload("User").
-		Scopes(func(db *gorm.DB) *gorm.DB {
+		Scopes(func(query *gorm.DB) *gorm.DB {
 			if len(option.UserIDs) > 0 {
-				db.Where("user_id IN ?", option.UserIDs)
+				query.Where("user_id IN ?", option.UserIDs)
 			}
 			if len(option.ExcludeUserIDs) > 0 {
-				db.Where("user_id NOT IN ?", option.ExcludeUserIDs)
+				query.Where("user_id NOT IN ?", option.ExcludeUserIDs)
 			}
 
 			if !option.Draft {
-				db.Where("draft = ?", false).
+				query.Where("draft = ?", false).
 					Where("published_at <= ?", time.Now())
 			}
 
-			if option.Recent {
-				db.Order("created_at desc")
-			} else {
-				db.Order("created_at asc")
+			if option.Keyword != nil {
+				query.Where(
+					db.Or("title LIKE ?", "%"+*option.Keyword+"%").
+						Or("body LIKE ?", "%"+*option.Keyword+"%"),
+				)
 			}
-			return db
+
+			if option.Recent {
+				query.Order("published_at desc")
+			} else {
+				query.Order("published_at asc")
+			}
+			return query
 		})
 
 	count, err := paging.GetCount(query)
@@ -82,7 +89,7 @@ func (u article) Search(ctx context.Context, paging *util.Paging, option reposit
 		return nil, 0, err
 	}
 
-	err = query.Order("published_at desc").Find(&articles).Error
+	err = query.Scopes(paging.Query()).Find(&articles).Error
 	if err != nil {
 		return nil, 0, err
 	}

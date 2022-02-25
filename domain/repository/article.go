@@ -12,6 +12,8 @@ type ArticleSearchOption struct {
 	ExcludeUserIDs []uint
 	Draft          bool
 
+	Keyword *string
+
 	Recent bool
 }
 

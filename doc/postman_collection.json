@@ -764,6 +764,41 @@
 					"response": []
 				},
 				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base}}/articles?length=10&page=1&keyword=&recent=true",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"articles"
+							],
+							"query": [
+								{
+									"key": "length",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "recent",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "GetByID",
 					"request": {
 						"method": "GET",
