@@ -17,6 +17,7 @@ type Support struct {
 	Quantity uint `json:"quantity"`
 
 	PaypalData datatypes.JSON `json:"-"`
+	StripeData datatypes.JSON `json:"-"`
 
 	User   *User `json:"user" gorm:"foreignKey:UserID"`
 	ToUser *User `json:"to_user" gorm:"foreignKey:ToID"`

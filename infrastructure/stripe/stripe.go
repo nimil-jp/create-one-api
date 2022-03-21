@@ -6,6 +6,7 @@ import (
 	"github.com/nimil-jp/gin-utils/errors"
 	sdk "github.com/stripe/stripe-go/v72"
 	"github.com/stripe/stripe-go/v72/oauth"
+	"github.com/stripe/stripe-go/v72/paymentintent"
 
 	"go-gin-ddd/config"
 )
@@ -16,6 +17,7 @@ func init() {
 
 type IStripe interface {
 	GetStripeUserID(authorizationCode string) (string, error)
+	NewPaymentIntent(price int64, accountID string) (clientSecret string, err error)
 }
 
 type stripe struct{}
@@ -34,4 +36,23 @@ func (s stripe) GetStripeUserID(authorizationCode string) (string, error) {
 	}
 
 	return token.StripeUserID, nil
+}
+
+func (s stripe) NewPaymentIntent(price int64, accountID string) (clientSecret string, err error) {
+	pi, err := paymentintent.New(&sdk.PaymentIntentParams{
+		Amount:   sdk.Int64(price),
+		Currency: sdk.String(string(sdk.CurrencyJPY)),
+		AutomaticPaymentMethods: &sdk.PaymentIntentAutomaticPaymentMethodsParams{
+			Enabled: sdk.Bool(true),
+		},
+		ApplicationFeeAmount: sdk.Int64(int64(float64(price) * config.PlatformFee)),
+		TransferData: &sdk.PaymentIntentTransferDataParams{
+			Destination: sdk.String(accountID),
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return pi.ClientSecret, nil
 }

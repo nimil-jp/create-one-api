@@ -20,6 +20,22 @@ func NewSupport(uuc usecase.ISupport) *Support {
 	}
 }
 
+func (u Support) StripePaymentIntent(ctx context.Context, c *gin.Context) error {
+	var req request.SupportStripePaymentIntent
+
+	if !bind(c, &req) {
+		return nil
+	}
+
+	clientSecret, err := u.supportUseCase.StripePaymentIntent(ctx, &req)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, clientSecret)
+	return nil
+}
+
 func (u Support) Create(ctx context.Context, c *gin.Context) error {
 	var req request.SupportCreate
 

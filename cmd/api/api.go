@@ -66,7 +66,7 @@ func Execute() {
 
 	// ----- use case -----
 	userUseCase := usecase.NewUser(userPersistence, articlePersistence, firebase, emailInfra, paypalInfra, stripeInfra)
-	supportUseCase := usecase.NewSupport(supportPersistence, userPersistence)
+	supportUseCase := usecase.NewSupport(supportPersistence, userPersistence, stripeInfra)
 	articleUseCase := usecase.NewArticle(articlePersistence)
 
 	// ----- handler -----
@@ -150,6 +150,7 @@ func Execute() {
 		})
 
 		r.Group("supports", nil, func(r *router.Router) {
+			r.Post("paypal-payment-intent", supportHandler.StripePaymentIntent)
 			r.Post("", supportHandler.Create)
 		})
 

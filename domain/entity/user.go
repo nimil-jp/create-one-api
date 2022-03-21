@@ -56,10 +56,12 @@ type User struct {
 }
 
 func NewUser(_ context.Context, dto *request.UserCreate) (*User, error) {
+	stripeUserID := ""
 	var user = User{
 		FirebaseUID:     dto.FirebaseUID,
 		Email:           dto.Email,
 		PaypalConnected: false,
+		StripeUserID:    &stripeUserID,
 		UnitPrice:       500,
 	}
 
