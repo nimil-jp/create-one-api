@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"math/rand"
+
 	"github.com/nimil-jp/gin-utils/context"
 
 	"go-gin-ddd/domain"
@@ -55,11 +57,22 @@ type User struct {
 	} `json:"meta,omitempty" gorm:"embedded"`
 }
 
+var usernameRunes = []rune("abcdefghijklmnopqrstuvwxyz0123456789")
+
+func generateUsername() string {
+	b := make([]rune, 20)
+	for i := range b {
+		b[i] = usernameRunes[rand.Intn(len(usernameRunes))]
+	}
+	return string(b)
+}
+
 func NewUser(_ context.Context, dto *request.UserCreate) (*User, error) {
 	stripeUserID := ""
 	var user = User{
 		FirebaseUID:     dto.FirebaseUID,
 		Email:           dto.Email,
+		Username:        generateUsername(),
 		PaypalConnected: false,
 		StripeUserID:    &stripeUserID,
 		UnitPrice:       500,
