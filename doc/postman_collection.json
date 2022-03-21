@@ -700,6 +700,43 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "ConnectStripe",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"authorization_code\": \"code\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/users/:user_id/connect-stripe",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"connect-stripe"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -713,7 +750,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"to_id\": 2,\n    \"message\": \"応援してます\",\n    \"quantity\": 3,\n    \"paypal_data\": {}\n}",
+							"raw": "{\n    \"to_id\": 2,\n    \"message\": \"応援してます\",\n    \"quantity\": 3,\n    \"paypal_data\": {},\n    \"stripe_data\": {}\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -727,6 +764,33 @@
 							],
 							"path": [
 								"supports"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Paypal Payment Intent",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stripe_user_id\": \"acct_xxxxxxxxxxxxxxxx\",\n    \"amount\": 500\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base}}/supports/paypal-payment-intent",
+							"host": [
+								"{{base}}"
+							],
+							"path": [
+								"supports",
+								"paypal-payment-intent"
 							]
 						}
 					},
