@@ -16,6 +16,8 @@ type User struct {
 	PaypalConnected  bool    `json:"paypal_connected"`
 	PaypalMerchantID *string `json:"paypal_merchant_id"`
 
+	StripeUserID *string `json:"stripe_user_id" gorm:"not null"`
+
 	UnitPrice uint `json:"unit_price"`
 
 	CoverImage *string `json:"cover_image"`

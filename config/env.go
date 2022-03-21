@@ -47,6 +47,9 @@ type EnvType struct {
 		ClientID string `required:"true" split_words:"true"`
 		Secret   string `required:"true"`
 	}
+	Stripe struct {
+		SecretKey string `required:"true" split_words:"true"`
+	}
 }
 
 func fileExists(path string) bool {

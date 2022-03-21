@@ -21,6 +21,7 @@ import (
 	"go-gin-ddd/infrastructure/log"
 	"go-gin-ddd/infrastructure/paypal"
 	"go-gin-ddd/infrastructure/persistence"
+	"go-gin-ddd/infrastructure/stripe"
 	"go-gin-ddd/interface/handler"
 	"go-gin-ddd/usecase"
 )
@@ -56,6 +57,7 @@ func Execute() {
 	gcs := gcp.NewGcs()
 	firebase := gcp.NewFirebase()
 	paypalInfra := paypal.NewPaypal()
+	stripeInfra := stripe.New()
 
 	// persistence
 	userPersistence := persistence.NewUser()
@@ -63,7 +65,7 @@ func Execute() {
 	articlePersistence := persistence.NewArticle()
 
 	// ----- use case -----
-	userUseCase := usecase.NewUser(userPersistence, articlePersistence, firebase, emailInfra, paypalInfra)
+	userUseCase := usecase.NewUser(userPersistence, articlePersistence, firebase, emailInfra, paypalInfra, stripeInfra)
 	supportUseCase := usecase.NewSupport(supportPersistence, userPersistence)
 	articleUseCase := usecase.NewArticle(articlePersistence)
 
@@ -126,6 +128,7 @@ func Execute() {
 				r.Put("", userHandler.Edit)
 				r.Patch("", userHandler.Patch)
 				r.Get("connect-paypal", userHandler.ConnectPaypal)
+				r.Patch("connect-stripe", userHandler.ConnectStripe)
 
 				r.Group("following", nil, func(r *router.Router) {
 					r.Post(":target_user_id", userHandler.Follow(true))

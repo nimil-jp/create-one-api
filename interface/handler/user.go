@@ -120,6 +120,22 @@ func (u User) ConnectPaypal(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
+func (u User) ConnectStripe(ctx context.Context, c *gin.Context) error {
+	var req request.UserConnectStripe
+
+	if !bind(c, &req) {
+		return nil
+	}
+
+	err := u.userUseCase.ConnectStripe(ctx, req.AuthorizationCode)
+	if err != nil {
+		return err
+	}
+
+	c.Status(http.StatusOK)
+	return nil
+}
+
 func (u User) Search(ctx context.Context, c *gin.Context) error {
 	paging := util.NewPaging(c)
 

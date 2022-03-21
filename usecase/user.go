@@ -15,6 +15,7 @@ import (
 	emailInfra "go-gin-ddd/infrastructure/email"
 	"go-gin-ddd/infrastructure/gcp"
 	"go-gin-ddd/infrastructure/paypal"
+	"go-gin-ddd/infrastructure/stripe"
 	"go-gin-ddd/resource/request"
 )
 
@@ -29,6 +30,7 @@ type IUser interface {
 	Follow(ctx context.Context, id uint, follow bool) error
 
 	ConnectPaypal(ctx context.Context) (string, error)
+	ConnectStripe(ctx context.Context, authorizationCode string) error
 
 	Search(ctx context.Context, paging *util.Paging, keyword string) ([]*entity.User, uint, error)
 
@@ -52,15 +54,17 @@ type user struct {
 	firebase    gcp.IFirebase
 	email       emailInfra.IEmail
 	paypal      paypal.IPaypal
+	stripe      stripe.IStripe
 }
 
-func NewUser(ur repository.IUser, ar repository.IArticle, firebase gcp.IFirebase, email emailInfra.IEmail, pp paypal.IPaypal) IUser {
+func NewUser(ur repository.IUser, ar repository.IArticle, firebase gcp.IFirebase, email emailInfra.IEmail, pp paypal.IPaypal, stripe stripe.IStripe) IUser {
 	return &user{
 		userRepo:    ur,
 		articleRepo: ar,
 		firebase:    firebase,
 		email:       email,
 		paypal:      pp,
+		stripe:      stripe,
 	}
 }
 
@@ -166,6 +170,22 @@ func (u user) ConnectPaypal(ctx context.Context) (string, error) {
 	}
 
 	return u.paypal.ConnectURL(user.Email)
+}
+
+func (u user) ConnectStripe(ctx context.Context, authorizationCode string) error {
+	stripeUserID, err := u.stripe.GetStripeUserID(authorizationCode)
+	if err != nil {
+		return err
+	}
+
+	user, err := u.userRepo.GetByID(ctx, ctx.UID(), nil)
+	if err != nil {
+		return err
+	}
+
+	user.StripeUserID = &stripeUserID
+
+	return u.userRepo.Update(ctx, user)
 }
 
 func (u user) Search(ctx context.Context, paging *util.Paging, keyword string) ([]*entity.User, uint, error) {

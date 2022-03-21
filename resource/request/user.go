@@ -50,3 +50,7 @@ type UserPatchRequest struct {
 	Qiita     *string `json:"qiita"`
 	Zenn      *string `json:"zenn"`
 }
+
+type UserConnectStripe struct {
+	AuthorizationCode string `json:"authorization_code"`
+}
