@@ -52,7 +52,7 @@ func getByOptionScope(db *gorm.DB, uid uint, option *repository.UserGetOption) f
 					subQueries = append(subQueries,
 						db.Table("user_follows").Select("COUNT(*)").Where("user_id = users.id"),
 						db.Table("user_follows").Select("COUNT(*)").Where("following_id = users.id"),
-						db.Table("supports").Select("COUNT(*)").Where("to_id = users.id"),
+						db.Table("transactions").Select("COUNT(*)").Where("to_id = users.id"),
 					)
 				}
 
@@ -231,11 +231,11 @@ func (u user) Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*
 	db := ctx.DB()
 
 	var users []*entity.User
-	query := db.Table("supports").
+	query := db.Table("transactions").
 		Select("`users`.*").
 		Distinct("`users`.`id`").
-		Joins("JOIN users ON users.id = supports.to_id AND users.deleted_at IS NULL").
-		Where("supports.user_id = ?", id)
+		Joins("JOIN users ON users.id = transactions.to_id AND users.deleted_at IS NULL").
+		Where("transactions.user_id = ?", id)
 
 	count, err := paging.GetCount(query)
 	if err != nil {
@@ -258,11 +258,11 @@ func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*
 	db := ctx.DB()
 
 	var users []*entity.User
-	query := db.Table("supports").
+	query := db.Table("transactions").
 		Select("`users`.*").
 		Distinct("`users`.`id`").
-		Joins("JOIN users ON users.id = supports.user_id AND users.deleted_at IS NULL").
-		Where("supports.to_id = ?", id)
+		Joins("JOIN users ON users.id = transactions.user_id AND users.deleted_at IS NULL").
+		Where("transactions.to_id = ?", id)
 
 	count, err := paging.GetCount(query)
 	if err != nil {
