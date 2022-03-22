@@ -17,7 +17,7 @@ func init() {
 
 type IStripe interface {
 	GetStripeUserID(authorizationCode string) (string, error)
-	NewPaymentIntent(price int64, accountID string) (clientSecret string, err error)
+	CreatePaymentIntent(price int64, accountID string) (clientSecret string, err error)
 }
 
 type stripe struct{}
@@ -38,7 +38,7 @@ func (s stripe) GetStripeUserID(authorizationCode string) (string, error) {
 	return token.StripeUserID, nil
 }
 
-func (s stripe) NewPaymentIntent(price int64, accountID string) (clientSecret string, err error) {
+func (s stripe) CreatePaymentIntent(price int64, accountID string) (clientSecret string, err error) {
 	pi, err := paymentintent.New(&sdk.PaymentIntentParams{
 		Amount:   sdk.Int64(price),
 		Currency: sdk.String(string(sdk.CurrencyJPY)),

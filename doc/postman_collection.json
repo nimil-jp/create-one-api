@@ -741,7 +741,7 @@
 			]
 		},
 		{
-			"name": "Support",
+			"name": "Transaction",
 			"item": [
 				{
 					"name": "Create",
@@ -758,12 +758,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/supports",
+							"raw": "{{base}}/transactions",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"supports"
+								"transactions"
 							]
 						}
 					},
@@ -784,12 +784,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base}}/supports/paypal-payment-intent",
+							"raw": "{{base}}/transactions/paypal-payment-intent",
 							"host": [
 								"{{base}}"
 							],
 							"path": [
-								"supports",
+								"transactions",
 								"paypal-payment-intent"
 							]
 						}
@@ -1057,7 +1057,7 @@
 		},
 		{
 			"key": "base",
-			"value": "https://dev.createone.me"
+			"value": "https://api.dev.createone.me"
 		},
 		{
 			"key": "email",

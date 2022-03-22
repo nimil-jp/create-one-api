@@ -25,7 +25,7 @@ type paypal struct {
 	accessToken string
 }
 
-func NewPaypal() IPaypal {
+func New() IPaypal {
 	paypalURL := "https://api-m.paypal.com"
 	if config.Env.Paypal.Sandbox {
 		paypalURL = "https://api-m.sandbox.paypal.com"

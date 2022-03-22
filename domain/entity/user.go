@@ -45,8 +45,8 @@ type User struct {
 	Following []*User `json:"following" gorm:"many2many:user_follows;joinForeignKey:user_id;joinReferences:following_id"`
 	Followers []*User `json:"followers" gorm:"many2many:user_follows;joinForeignKey:following_id;joinReferences:user_id"`
 
-	Supporting []*Support `json:"supporting" gorm:"foreignKey:UserID"`
-	Supporters []*Support `json:"supporters" gorm:"foreignKey:ToID"`
+	SupportTransactions   []*Transaction `json:"supporting" gorm:"foreignKey:UserID"`
+	SupportedTransactions []*Transaction `json:"supporters" gorm:"foreignKey:ToID"`
 
 	Meta *struct {
 		FollowingCount  *uint `json:"following_count,omitempty" gorm:"->;-:migration"`
@@ -147,14 +147,14 @@ func (u User) FollowerIDs() []uint {
 
 func (u User) SupportingIDs() []uint {
 	var ids []uint
-	for _, support := range u.Supporting {
+	for _, support := range u.SupportTransactions {
 		ids = append(ids, support.ToUser.ID)
 	}
 	return ids
 }
 func (u User) SupporterIDs() []uint {
 	var ids []uint
-	for _, support := range u.Supporting {
+	for _, support := range u.SupportTransactions {
 		ids = append(ids, support.User.ID)
 	}
 	return ids

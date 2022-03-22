@@ -35,12 +35,12 @@ func getByOptionScope(db *gorm.DB, uid uint, option *repository.UserGetOption) f
 				query.Preload("Followers", limit(option.Limit))
 			}
 			if option.PreloadSupporting {
-				query.Preload("Supporting", limit(option.Limit)).
-					Preload("Supporting.ToUser")
+				query.Preload("SupportTransactions", limit(option.Limit)).
+					Preload("SupportTransactions.ToUser")
 			}
 			if option.PreloadSupporters {
-				query.Preload("Supporters", limit(option.Limit)).
-					Preload("Supporters.User")
+				query.Preload("SupportedTransactions", limit(option.Limit)).
+					Preload("SupportedTransactions.User")
 			}
 
 			if option.IncludeCount || option.IncludeRelation {

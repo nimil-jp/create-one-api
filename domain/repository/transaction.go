@@ -6,6 +6,6 @@ import (
 	"go-gin-ddd/domain/entity"
 )
 
-type ISupport interface {
-	Create(ctx context.Context, support *entity.Support) (uint, error)
+type ITransaction interface {
+	Create(ctx context.Context, support *entity.Transaction) (uint, error)
 }

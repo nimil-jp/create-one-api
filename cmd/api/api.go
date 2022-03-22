@@ -56,17 +56,17 @@ func Execute() {
 	emailInfra := email.New()
 	gcs := gcp.NewGcs()
 	firebase := gcp.NewFirebase()
-	paypalInfra := paypal.NewPaypal()
+	paypalInfra := paypal.New()
 	stripeInfra := stripe.New()
 
 	// persistence
 	userPersistence := persistence.NewUser()
-	supportPersistence := persistence.NewSupport()
+	supportPersistence := persistence.NewTransaction()
 	articlePersistence := persistence.NewArticle()
 
 	// ----- use case -----
 	userUseCase := usecase.NewUser(userPersistence, articlePersistence, firebase, emailInfra, paypalInfra, stripeInfra)
-	supportUseCase := usecase.NewSupport(supportPersistence, userPersistence, stripeInfra)
+	supportUseCase := usecase.NewTransaction(supportPersistence, userPersistence, stripeInfra)
 	articleUseCase := usecase.NewArticle(articlePersistence)
 
 	// ----- handler -----
@@ -74,7 +74,7 @@ func Execute() {
 	signedURLHandler := handler.NewSignedURL(gcs)
 
 	userHandler := handler.NewUser(userUseCase)
-	supportHandler := handler.NewSupport(supportUseCase)
+	supportHandler := handler.NewTransaction(supportUseCase)
 	articleHandler := handler.NewArticle(articleUseCase)
 
 	r := router.New(config.AppName, engine, rdb.Get)
@@ -149,8 +149,8 @@ func Execute() {
 			})
 		})
 
-		r.Group("supports", nil, func(r *router.Router) {
-			r.Post("paypal-payment-intent", supportHandler.StripePaymentIntent)
+		r.Group("transactions", nil, func(r *router.Router) {
+			r.Post("paypal-payment-intent", supportHandler.CreateStripePaymentIntent)
 			r.Post("", supportHandler.Create)
 		})
 

@@ -6,7 +6,7 @@ import (
 	"go-gin-ddd/domain"
 )
 
-type Support struct {
+type Transaction struct {
 	domain.SoftDeleteModel
 	UserID uint `json:"user_id"`
 	ToID   uint `json:"to_id"`
