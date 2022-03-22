@@ -44,27 +44,31 @@ type IUser interface {
 	Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 	Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 
+	SupportedTransactions(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Transaction, uint, error)
+
 	FollowingArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
 	SupportersArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
 }
 
 type user struct {
-	userRepo    repository.IUser
-	articleRepo repository.IArticle
-	firebase    gcp.IFirebase
-	email       emailInfra.IEmail
-	paypal      paypal.IPaypal
-	stripe      stripe.IStripe
+	userRepo        repository.IUser
+	transactionRepo repository.ITransaction
+	articleRepo     repository.IArticle
+	firebase        gcp.IFirebase
+	email           emailInfra.IEmail
+	paypal          paypal.IPaypal
+	stripe          stripe.IStripe
 }
 
-func NewUser(ur repository.IUser, ar repository.IArticle, firebase gcp.IFirebase, email emailInfra.IEmail, pp paypal.IPaypal, stripe stripe.IStripe) IUser {
+func NewUser(ur repository.IUser, tr repository.ITransaction, ar repository.IArticle, firebase gcp.IFirebase, email emailInfra.IEmail, pp paypal.IPaypal, stripe stripe.IStripe) IUser {
 	return &user{
-		userRepo:    ur,
-		articleRepo: ar,
-		firebase:    firebase,
-		email:       email,
-		paypal:      pp,
-		stripe:      stripe,
+		userRepo:        ur,
+		transactionRepo: tr,
+		articleRepo:     ar,
+		firebase:        firebase,
+		email:           email,
+		paypal:          pp,
+		stripe:          stripe,
 	}
 }
 
@@ -268,6 +272,10 @@ func (u user) Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*
 }
 func (u user) Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error) {
 	return u.userRepo.Supporters(ctx, paging, id)
+}
+
+func (u user) SupportedTransactions(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Transaction, uint, error) {
+	return u.transactionRepo.SupportedTransactions(ctx, paging, id)
 }
 
 func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error) {

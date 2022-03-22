@@ -433,6 +433,46 @@
 					]
 				},
 				{
+					"name": "Transaction",
+					"item": [
+						{
+							"name": "Get All Supported Transactions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base}}/users/:user_id/supported-transactions?length=10&page=1",
+									"host": [
+										"{{base}}"
+									],
+									"path": [
+										"users",
+										":user_id",
+										"supported-transactions"
+									],
+									"query": [
+										{
+											"key": "length",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Create",
 					"request": {
 						"method": "POST",

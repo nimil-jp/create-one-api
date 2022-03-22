@@ -286,6 +286,23 @@ func (u User) Supporters(ctx context.Context, c *gin.Context) error {
 	return nil
 }
 
+func (u User) SupportedTransactions(ctx context.Context, c *gin.Context) error {
+	paging := util.NewPaging(c)
+
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	transactions, count, err := u.userUseCase.SupportedTransactions(ctx, paging, id)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, response.NewSearchResponse(transactions, count))
+	return nil
+}
+
 func (u User) FollowingArticles(ctx context.Context, c *gin.Context) error {
 	paging := util.NewPaging(c)
 
