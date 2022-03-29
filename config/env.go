@@ -7,15 +7,12 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-const (
-	AppName = "createone"
-)
-
 var Env EnvType
 
 type EnvType struct {
 	Port string `default:"8080"`
 	App  struct {
+		Name   string `required:"true"`
 		Secret string `required:"true"`
 		URL    string `required:"true"`
 	}
@@ -39,7 +36,6 @@ type EnvType struct {
 	}
 	GCP struct {
 		CredentialPath string `required:"true" split_words:"true"`
-		TenantID       string `split_words:"true"`
 		Bucket         string `required:"true"`
 	}
 	Paypal struct {

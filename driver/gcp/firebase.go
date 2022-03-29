@@ -31,13 +31,5 @@ type FirebaseAuthClient interface {
 }
 
 func AuthClient() FirebaseAuthClient {
-	if config.Env.GCP.TenantID != "" {
-		tenant, err := authClient.TenantManager.AuthForTenant(config.Env.GCP.TenantID)
-		if err != nil {
-			panic(err)
-		}
-		return tenant
-	}
-
 	return authClient
 }

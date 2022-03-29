@@ -77,7 +77,7 @@ func Execute() {
 	transactionHandler := handler.NewTransaction(transactionUseCase)
 	articleHandler := handler.NewArticle(articleUseCase)
 
-	r := router.New(config.AppName, engine, rdb.Get)
+	r := router.New(config.Env.App.Name, engine, rdb.Get)
 
 	middleware.FirebaseSetup(firebase.AuthClient())
 

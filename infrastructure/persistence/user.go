@@ -19,7 +19,7 @@ func NewUser() repository.IUser {
 func (u user) Create(ctx context.Context, user *entity.User) (uint, error) {
 	db := ctx.DB()
 
-	if err := db.Create(user).Error; err != nil {
+	if err := db.FirstOrCreate(user).Error; err != nil {
 		return 0, dbError(err)
 	}
 	return user.ID, nil
