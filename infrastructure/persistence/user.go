@@ -19,7 +19,17 @@ func NewUser() repository.IUser {
 func (u user) Create(ctx context.Context, user *entity.User) (uint, error) {
 	db := ctx.DB()
 
-	if err := db.FirstOrCreate(user).Error; err != nil {
+	var current entity.User
+	err := db.Where(&entity.User{Email: user.Email}).First(&current).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return 0, dbError(err)
+	}
+
+	if current.ID != 0 {
+		return current.ID, nil
+	}
+
+	if err := db.Create(user).Error; err != nil {
 		return 0, dbError(err)
 	}
 	return user.ID, nil

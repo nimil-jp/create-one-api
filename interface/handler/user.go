@@ -27,13 +27,7 @@ func NewUser(uuc usecase.IUser) *User {
 }
 
 func (u User) Create(ctx context.Context, c *gin.Context) error {
-	var req request.UserCreate
-
-	if !bind(c, &req) {
-		return nil
-	}
-
-	id, err := u.userUseCase.Create(ctx, &req)
+	id, err := u.userUseCase.Create(ctx)
 	if err != nil {
 		return err
 	}

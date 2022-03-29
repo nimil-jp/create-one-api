@@ -13,6 +13,7 @@ import (
 
 type IFirebase interface {
 	AuthClient() gcp.FirebaseAuthClient
+	GetUserEmail(firebaseUID string) (string, error)
 	SetClaimsUID(firebaseUID string, uid uint) error
 }
 
@@ -28,6 +29,17 @@ func NewFirebase() IFirebase {
 
 func (i firebase) AuthClient() gcp.FirebaseAuthClient {
 	return i.client
+}
+
+func (i firebase) GetUserEmail(firebaseUID string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	user, err := i.client.GetUser(ctx, firebaseUID)
+	if err != nil {
+		return "", errors.NewUnexpected(err)
+	}
+	return user.Email, nil
 }
 
 func (i firebase) SetClaimsUID(firebaseUID string, uid uint) error {

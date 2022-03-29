@@ -67,11 +67,11 @@ func generateUsername() string {
 	return string(b)
 }
 
-func NewUser(_ context.Context, dto *request.UserCreate) (*User, error) {
+func NewUser(ctx context.Context, email string) (*User, error) {
 	stripeUserID := ""
 	var user = User{
-		FirebaseUID:     dto.FirebaseUID,
-		Email:           dto.Email,
+		FirebaseUID:     ctx.FirebaseUID(),
+		Email:           email,
 		Username:        generateUsername(),
 		PaypalConnected: false,
 		StripeUserID:    &stripeUserID,

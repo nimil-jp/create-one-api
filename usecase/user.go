@@ -20,7 +20,7 @@ import (
 )
 
 type IUser interface {
-	Create(ctx context.Context, req *request.UserCreate) (uint, error)
+	Create(ctx context.Context) (uint, error)
 
 	GetByID(ctx context.Context, id uint) (*entity.User, error)
 	GetByUsername(ctx context.Context, username string) (*entity.User, error)
@@ -72,8 +72,13 @@ func NewUser(ur repository.IUser, tr repository.ITransaction, ar repository.IArt
 	}
 }
 
-func (u user) Create(ctx context.Context, req *request.UserCreate) (uint, error) {
-	newUser, err := entity.NewUser(ctx, req)
+func (u user) Create(ctx context.Context) (uint, error) {
+	email, err := u.firebase.GetUserEmail(ctx.FirebaseUID())
+	if err != nil {
+		return 0, err
+	}
+
+	newUser, err := entity.NewUser(ctx, email)
 	if err != nil {
 		return 0, err
 	}

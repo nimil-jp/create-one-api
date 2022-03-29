@@ -477,15 +477,6 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"firebase_uid\": \"{{firebase_uid}}\",\n    \"email\": \"{{email}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "{{base}}/users",
 							"host": [
@@ -1050,14 +1041,6 @@
 					"if (pm.collectionVariables.get(\"token\") && ",
 					"    pm.collectionVariables.get(\"expire\") > now()) return;",
 					"",
-					"const env = pm.collectionVariables.get(\"env\")",
-					"",
-					"const tenantId = {",
-					"    \"local\": \"local-mdch7\",",
-					"    \"dev\": \"development-4hnty\",",
-					"    \"stg\": \"staging-n5vnx\"",
-					"}",
-					"",
 					"pm.sendRequest({",
 					"    url: 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDt6GF7spx2fU8r8x-hNiACJSN_P_oE5UM',",
 					"    method: 'POST',",
@@ -1067,8 +1050,7 @@
 					"        {",
 					"            \"email\": pm.collectionVariables.get(\"email\"),",
 					"            \"password\": pm.collectionVariables.get(\"password\"),",
-					"            \"returnSecureToken\": true,",
-					"            ...(env === \"prd\" ? {} : {\"tenantId\": tenantId[env]})",
+					"            \"returnSecureToken\": true",
 					"        }",
 					"    )}",
 					"}, (err, res) => {",
@@ -1091,11 +1073,6 @@
 	],
 	"variable": [
 		{
-			"key": "env",
-			"value": "local",
-			"type": "string"
-		},
-		{
 			"key": "base",
 			"value": "https://api.dev.createone.me"
 		},
@@ -1105,7 +1082,8 @@
 		},
 		{
 			"key": "password",
-			"value": ""
+			"value": "",
+			"type": "string"
 		},
 		{
 			"key": "token",
