@@ -11,9 +11,8 @@ import (
 
 type User struct {
 	domain.SoftDeleteModel
-	FirebaseUID string `json:"-" gorm:"unique"`
-	Email       string `json:"-" gorm:"unique;index"`
-	Username    string `json:"username" gorm:"index"`
+	Email    string `json:"-" gorm:"unique;index"`
+	Username string `json:"username" gorm:"index"`
 
 	PaypalConnected  bool    `json:"paypal_connected"`
 	PaypalMerchantID *string `json:"paypal_merchant_id"`
@@ -67,10 +66,9 @@ func generateUsername() string {
 	return string(b)
 }
 
-func NewUser(ctx context.Context, email string) (*User, error) {
+func NewUser(_ context.Context, email string) (*User, error) {
 	stripeUserID := ""
 	var user = User{
-		FirebaseUID:     ctx.FirebaseUID(),
 		Email:           email,
 		Username:        generateUsername(),
 		PaypalConnected: false,
