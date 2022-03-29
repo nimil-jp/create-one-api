@@ -12,7 +12,7 @@ import (
 type User struct {
 	domain.SoftDeleteModel
 	FirebaseUID string `json:"-" gorm:"unique"`
-	Email       string `json:"email" gorm:"unique;index"`
+	Email       string `json:"-" gorm:"unique;index"`
 	Username    string `json:"username" gorm:"index"`
 
 	PaypalConnected  bool    `json:"paypal_connected"`
