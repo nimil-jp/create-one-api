@@ -2,6 +2,7 @@ package entity
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/nimil-jp/gin-utils/context"
 
@@ -59,6 +60,7 @@ type User struct {
 var usernameRunes = []rune("abcdefghijklmnopqrstuvwxyz0123456789")
 
 func generateUsername() string {
+	rand.Seed(time.Now().UnixNano())
 	b := make([]rune, 20)
 	for i := range b {
 		b[i] = usernameRunes[rand.Intn(len(usernameRunes))]
