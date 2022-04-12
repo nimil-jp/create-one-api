@@ -149,9 +149,9 @@ func (u user) Follow(ctx context.Context, id uint, follow bool) error {
 	}
 
 	if follow {
-		return dbError(db.Model(&from).Association("Following").Append(&to))
+		return dbError(db.Model(&from).Omit("Following.*").Association("Following").Append(&to))
 	} else {
-		return dbError(db.Model(&from).Association("Following").Delete(&to))
+		return dbError(db.Model(&from).Omit("Following.*").Association("Following").Delete(&to))
 	}
 }
 
