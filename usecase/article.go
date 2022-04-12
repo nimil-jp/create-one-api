@@ -48,8 +48,11 @@ func (a article) GetByID(ctx context.Context, id uint) (*entity.Article, error) 
 	if err != nil {
 		return nil, err
 	}
-	if !ctx.Authenticated() && article.UserID != ctx.UID() &&
-		(article.Draft == nil || !*article.Draft || article.PublishedAt.After(time.Now())) {
+	if !ctx.Authenticated() &&
+		article.UserID != ctx.UID() &&
+		(article.Draft == nil ||
+			*article.Draft ||
+			article.PublishedAt.After(time.Now())) {
 		return nil, errors.NotFound()
 	}
 	return article, nil
