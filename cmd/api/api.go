@@ -26,7 +26,7 @@ import (
 	"go-gin-ddd/usecase"
 )
 
-func Execute() {
+func Run() {
 	logger := log.Logger()
 
 	err := jwt.SetUp(
