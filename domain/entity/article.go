@@ -44,7 +44,7 @@ func (e *Article) Update(dto *request.ArticleUpdate) {
 
 func (e Article) WrittenBy(userID uint) error {
 	if e.UserID != userID {
-		return errors.NewExpected(http.StatusForbidden, "あなたの記事ではありません。")
+		return errors.NewExpected(http.StatusForbidden, "自分の記事ではありません。")
 	}
 	return nil
 }

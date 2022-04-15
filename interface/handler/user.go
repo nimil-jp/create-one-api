@@ -329,3 +329,18 @@ func (u User) SupportersArticles(ctx context.Context, c *gin.Context) error {
 	c.JSON(http.StatusOK, response.NewSearchResponse(articles, count))
 	return nil
 }
+
+func (u User) Delete(ctx context.Context, c *gin.Context) error {
+	id, err := uintParam(c, "user_id")
+	if err != nil {
+		return err
+	}
+
+	err = u.userUseCase.Delete(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	c.Status(http.StatusNoContent)
+	return nil
+}

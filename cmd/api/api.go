@@ -147,6 +147,8 @@ func Run() {
 						r.Get("", userHandler.SupportersArticles)
 					})
 				})
+
+				r.Delete("", userHandler.Delete)
 			})
 		})
 
