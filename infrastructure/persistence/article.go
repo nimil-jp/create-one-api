@@ -64,7 +64,7 @@ func (u article) Search(ctx context.Context, paging *util.Paging, option reposit
 				query.Where("user_id NOT IN ?", option.ExcludeUserIDs)
 			}
 
-			if !option.Draft {
+			if option.IsPublished {
 				query.Where("draft = ?", false).
 					Where("published_at <= ?", time.Now())
 			}

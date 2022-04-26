@@ -229,7 +229,7 @@ func (v TimelineKind) Valid() error {
 func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []TimelineKind) ([]*entity.Article, error) {
 	articleOption := repository.ArticleSearchOption{
 		ExcludeUserIDs: []uint{ctx.UID()},
-		Draft:          false,
+		IsPublished:    true,
 	}
 
 	user, err := u.userRepo.GetByID(ctx, ctx.UID(), &repository.UserGetOption{
@@ -262,9 +262,9 @@ func (u user) Timeline(ctx context.Context, paging *util.Paging, kinds []Timelin
 
 func (u user) Articles(ctx context.Context, paging *util.Paging, id uint, recent bool) ([]*entity.Article, uint, error) {
 	return u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
-		UserIDs: []uint{id},
-		Draft:   ctx.UID() == id,
-		Recent:  recent,
+		UserIDs:     []uint{id},
+		IsPublished: ctx.UID() != id,
+		Recent:      recent,
 	})
 }
 
@@ -298,7 +298,7 @@ func (u user) FollowingArticles(ctx context.Context, paging *util.Paging, id uin
 	articles, count, err := u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
 		UserIDs:        user.FollowingIDs(),
 		ExcludeUserIDs: []uint{ctx.UID()},
-		Draft:          false,
+		IsPublished:    true,
 	})
 	if err != nil {
 		return nil, 0, err
@@ -319,7 +319,7 @@ func (u user) SupportersArticles(ctx context.Context, paging *util.Paging, id ui
 	articles, count, err := u.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
 		UserIDs:        user.SupporterIDs(),
 		ExcludeUserIDs: []uint{ctx.UID()},
-		Draft:          false,
+		IsPublished:    true,
 	})
 	if err != nil {
 		return nil, 0, err

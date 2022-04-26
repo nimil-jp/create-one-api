@@ -10,7 +10,7 @@ import (
 type ArticleSearchOption struct {
 	UserIDs        []uint
 	ExcludeUserIDs []uint
-	Draft          bool
+	IsPublished    bool
 
 	Keyword *string
 

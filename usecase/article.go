@@ -37,7 +37,7 @@ func (a article) Create(ctx context.Context, req *request.ArticleCreate) (uint, 
 func (a article) Search(ctx context.Context, paging *util.Paging, keyword string, recent bool) ([]*entity.Article, uint, error) {
 	return a.articleRepo.Search(ctx, paging, repository.ArticleSearchOption{
 		ExcludeUserIDs: []uint{ctx.UID()},
-		Draft:          false,
+		IsPublished:    true,
 		Keyword:        &keyword,
 		Recent:         recent,
 	})
