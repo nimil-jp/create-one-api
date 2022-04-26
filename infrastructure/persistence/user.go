@@ -4,7 +4,6 @@ import (
 	"github.com/nimil-jp/gin-utils/context"
 	"github.com/nimil-jp/gin-utils/util"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 
 	"go-gin-ddd/domain"
 	"go-gin-ddd/domain/entity"
@@ -298,5 +297,5 @@ func (u user) Delete(ctx context.Context, id uint) error {
 
 	user := entity.User{SoftDeleteModel: domain.SoftDeleteModel{ID: id}}
 
-	return dbError(db.Select(clause.Associations).Delete(user).Error)
+	return dbError(db.Select("Articles", "Following", "Followers").Delete(&user).Error)
 }
