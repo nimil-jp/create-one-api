@@ -48,6 +48,8 @@ type IUser interface {
 
 	FollowingArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
 	SupportersArticles(ctx context.Context, paging *util.Paging, id uint) ([]*entity.Article, uint, error)
+
+	Delete(ctx context.Context, id uint) error
 }
 
 type user struct {
@@ -324,4 +326,11 @@ func (u user) SupportersArticles(ctx context.Context, paging *util.Paging, id ui
 	}
 
 	return articles, count, nil
+}
+
+func (u user) Delete(ctx context.Context, id uint) error {
+	if ctx.UID() != id {
+		return errors.NewExpected(http.StatusForbidden, "自分のアカウント以外は削除できません。")
+	}
+	return u.userRepo.Delete(ctx, id)
 }

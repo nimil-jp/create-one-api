@@ -12,7 +12,7 @@ import (
 
 type User struct {
 	domain.SoftDeleteModel
-	Email    string `json:"-" gorm:"unique;index"`
+	Email    string `json:"-" gorm:"index"`
 	Username string `json:"username" gorm:"index"`
 
 	PaypalConnected  bool    `json:"paypal_connected"`

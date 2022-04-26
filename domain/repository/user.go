@@ -37,4 +37,6 @@ type IUser interface {
 	Followers(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 	Supporting(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
 	Supporters(ctx context.Context, paging *util.Paging, id uint) ([]*entity.User, uint, error)
+
+	Delete(ctx context.Context, id uint) error
 }
