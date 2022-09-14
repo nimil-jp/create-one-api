@@ -38,7 +38,7 @@ jobs:
               --image "$IMAGE:${{ github.ref_name }}" \
               --project ${{ secrets.GCP_PROJECT_ID }} \
               --region ${{ secrets.GCP_REGION }} \
-              --ingress internal-and-cloud-load-balancing \
+              --ingress all \
               --platform=managed \
               --allow-unauthenticated \
               --quiet

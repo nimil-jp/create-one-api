@@ -43,7 +43,7 @@ jobs:
               --image "$IMAGE:${{ github.SHA }}" \
               --project ${{ secrets.GCP_PROJECT_ID }} \
               --region ${{ secrets.GCP_REGION }} \
-              --ingress internal-and-cloud-load-balancing \
+              --ingress all \
               --platform=managed \
               --allow-unauthenticated \
               --quiet
