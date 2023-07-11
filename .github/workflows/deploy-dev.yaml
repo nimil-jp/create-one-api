@@ -28,13 +28,10 @@ jobs:
 
       - name: Build and Push Image
         run: |
-          docker build . -t "$IMAGE:${{ github.SHA }}"
-          docker push "$IMAGE:${{ github.SHA }}"
-
-          docker tag "$IMAGE:${{ github.SHA }}" "$IMAGE:dev"
+          docker build . -t "$IMAGE:dev"
           docker push "$IMAGE:dev"
 
-          docker tag "$IMAGE:${{ github.SHA }}" "$IMAGE:latest"
+          docker tag "$IMAGE:dev" "$IMAGE:latest"
           docker push "$IMAGE:latest"
 
       - name: Deploy
